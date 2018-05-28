@@ -4,14 +4,16 @@ from tinydb import TinyDB, Query
 class DBHandler:
 	
 	def __init__(self, db_path):
+		self.path = db_path
 		self.db = TinyDB(db_path)
 	
 	def insert_column(self, name, value):
 		l = self.get_all()
 		cols = {name: value}
-		self.db.purge()
+		ids = []
 		for r in l:
-			self.db.insert({**r, **cols})
+			ids.append(r.doc_id)
+		self.db.update(cols, doc_ids=ids)
 
 	def insert_record(self, d):
 		self.db.insert(d)
@@ -33,3 +35,4 @@ db.insert_record({"Name": "CSRF", "Desc": "Make user do stuff", "Metrics": {"Exp
 print(db.get_all())
 db.insert_column("Score", 5.5)
 print(db.get_all())
+print(db.search("Name", "XSS"))
