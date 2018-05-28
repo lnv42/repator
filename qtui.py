@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, Qt
 import sys
 import json
+import collections
 
 class Window(QWidget):
     def __init__(self, title, tabLst):
@@ -57,6 +58,7 @@ class Tab(QWidget):
         self.grid = QGridLayout()
         self.grid.setSpacing(5)
         self.grid.setContentsMargins(5,5,5,5)
+        self.grid.setAlignment(Qt.AlignTop)
 
         self.parseLst()
 
@@ -117,33 +119,34 @@ class Tab(QWidget):
 
 
 
-missionLst = {
-    "client":{"label":"Client",
-              "class":QLineEdit,
-              "signal":"textChanged"},
-    "target":{"label":"Cible",
-              "class":QLineEdit,
-              "signal":"textChanged"},
-    "code":{"label":"Code",
-            "class":QLineEdit,
-            "signal":"textChanged"},
-    "dateStart":{"label":"Date de début",
-                 "class":QDateEdit,
-                 "signal":"dateChanged",
-                 "arg":QDate.currentDate()},
-    "dateEnd":{"label":"Date de fin",
-               "class":QDateEdit,
-               "signal":"dateChanged",
-               "arg":QDate.currentDate()},
-    "environment":{"label":"Environment",
-                   "class":QLineEdit,
-                   "signal":"textChanged"},
-    "list":{"class":QListWidget,
-            "list":{"class":QListWidgetItem,
-                    "lines":["aa"]}}
-}
 
-tabLst = {"Mission":missionLst, "Auditors":{}, "Vulns":{}}
+missionLst = collections.OrderedDict()
+missionLst["client"] = {"label":"Client",
+                        "class":QLineEdit,
+                        "signal":"textChanged"}
+missionLst["target"] = {"label":"Cible",
+                        "class":QLineEdit,
+                        "signal":"textChanged"}
+missionLst["code"] = {"label":"Code",
+                      "class":QLineEdit,
+                      "signal":"textChanged"}
+missionLst["dateStart"] = {"label":"Date de début",
+                           "class":QDateEdit,
+                           "signal":"dateChanged",
+                           "arg":QDate.currentDate()}
+missionLst["dateEnd"] = {"label":"Date de fin",
+                         "class":QDateEdit,
+                         "signal":"dateChanged",
+                         "arg":QDate.currentDate()}
+missionLst["environment"] = {"label":"Environment",
+                             "class":QLineEdit,
+                             "signal":"textChanged"}
+
+tabLst = collections.OrderedDict()
+tabLst["Mission"] = missionLst
+#tabLst["Auditors"] = auditors
+
+tabLst["Vulns"] = {}
 
 def main(args) :
     app=QApplication(args)
