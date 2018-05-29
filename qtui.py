@@ -84,8 +84,38 @@ class Tab(QWidget):
                     field.setDate(QDate.fromString(value))
 
     def save(self):
-        #print(json.dumps(self.values))
+        if "list" in self.fields:
+            lst = self.fields["list"]
+            cpt = 0
+            outLst = {}
+            while cpt < lst.count():
+                item = lst.item(cpt)
+
+                if (item.flags() & Qt.ItemIsUserCheckable == Qt.ItemIsUserCheckable):
+                    outLst[item.text()] = item.checkState()
+                else:
+                    outLst[item.text()] = True
+
+                cpt += 1
+            self.values["list"] = outLst
+
         return self.values
+
+    def addItem(self):
+        listOpt = self.lst["list"]["list"]
+        li = listOpt["class"]("", self.fields["list"])
+        if "flags" in listOpt:
+            li.setFlags(listOpt["flags"])
+        if "setData" in listOpt:
+            for arg1, arg2 in listOpt["setData"].items():
+                li.setData(arg1, arg2)
+
+        li.setFlags(li.flags()|Qt.ItemIsEditable)
+
+    def delItem(self):
+        lst = self.fields["list"]
+        for item in lst.selectedItems():
+            lst.takeItem(lst.row(item))
 
     def parseLst(self):
         cpt = 0
@@ -100,12 +130,30 @@ class Tab(QWidget):
 
             if "signal" in field:
                 getattr(w, field["signal"]).connect(self.changeValue)
-                if "arg" in field:
+                if "arg" in field:n
                     getattr(w, field["signal"]).emit(field["arg"])
+
+            if "clicked" in field:
+                w.clicked.connect(getattr(self, field["clicked"]))
 
             if "list" in field:
                 for line in field["list"]["lines"]:
-                    field["list"]["class"](line, w)
+                    li = field["list"]["class"](line, w)
+                    if "flags" in field["list"]:
+                        li.setFlags(field["list"]["flags"])
+                    if "setData" in field["list"]:
+                        for arg1, arg2 in field["list"]["setData"].items():
+                            li.setData(arg1, arg2)
+
+            if "flags" in field:
+                w.setFlags(field["flags"])
+
+            if "setData" in field:
+                for arg1, arg2 in field["setData"].items():
+                    w.setData(arg1, arg2)
+
+            if "selectionMode" in field:
+                w.setSelectionMode(field["selectionMode"])
 
             if "label" in field:
                 l = QLabel(field["label"])
@@ -142,10 +190,23 @@ missionLst["environment"] = {"label":"Environment",
                              "class":QLineEdit,
                              "signal":"textChanged"}
 
+auditors = collections.OrderedDict()
+auditors["list"] = {"class":QListWidget,
+                    "selectionMode":QAbstractItemView.ExtendedSelection,
+                    "list":{"class":QListWidgetItem,
+                            "lines":("John Doe", "Jack Palmer"),
+                            "setData":{Qt.CheckStateRole:Qt.Checked},
+                            "flags":Qt.ItemIsSelectable|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled|Qt.ItemIsEditable}}
+auditors["add"] = {"class":QPushButton,
+                   "arg":"Add",
+                   "clicked":"addItem"}
+auditors["delete"] = {"class":QPushButton,
+                      "arg":"Delete",
+                      "clicked":"delItem"}
+
 tabLst = collections.OrderedDict()
 tabLst["Mission"] = missionLst
-#tabLst["Auditors"] = auditors
-
+tabLst["Auditors"] = auditors
 tabLst["Vulns"] = {}
 
 def main(args) :
