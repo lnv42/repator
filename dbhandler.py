@@ -14,9 +14,10 @@ class DBHandler:
 		for r in l:
 			ids.append(r.doc_id)
 		self.db.update(cols, doc_ids=ids)
+		return True
 
 	def insert_record(self, d):
-		self.db.insert(d)
+		return self.db.insert(d)
 
 	def get_all(self):
 		return self.db.all()
@@ -25,6 +26,12 @@ class DBHandler:
 		q = Query()
 		return self.db.search(q[name] == value)
 
+	def search_by_id(self, id_):
+		return self.db.get(doc_id=id_)
+
+	def update(self, rec):
+		return self.db.update(dict(rec), doc_ids=[rec.doc_id])
+		
 
 
 # Testing
@@ -34,5 +41,4 @@ db.insert_record({"Name": "XSS", "Desc": "Inject JS stuff", "Metrics": {"Exploit
 db.insert_record({"Name": "CSRF", "Desc": "Make user do stuff", "Metrics": {"Exploitability": {"AV": "N", "AC": "H", "AU": "M"}, "Impact": {"C": "N", "I": "C", "A": "N"}}})
 print(db.get_all())
 db.insert_column("Score", 5.5)
-print(db.get_all())
 print(db.search("Name", "XSS"))
