@@ -31,7 +31,7 @@ class AuditorHandler:
 	def search_auditor_by_id(self, auditor_id):
 		return self.db.search_by_id(auditory_id)
 		
-	def add_auditor(self, auditor):
+	def add_auditor(self, auditor=None):
 		return self.db.insert_record(auditor)
 
 	def add_property(self, property_name, default_value):
@@ -63,7 +63,7 @@ class VulnHandler:
 	def search_vuln_by_id(self, vuln_id):
 		return self.db.search_by_id(vuln_id)
 
-	def add_vuln(self, vuln):
+	def add_vuln(self, vuln=None):
 		return self.db.insert_record(vuln)
 
 	def add_property(self, property_name, default_value):

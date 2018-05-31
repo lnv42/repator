@@ -17,6 +17,10 @@ class DBHandler:
 		return True
 
 	def insert_record(self, d):
+		if d == None:
+			d = dict(self.get_by_id(1))
+			for k in d:
+				d[k] = ""
 		return self.db.insert(d)
 
 	def get_all(self):
