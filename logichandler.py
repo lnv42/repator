@@ -38,7 +38,7 @@ class AuditorHandler:
 		return self.db.insert_column(property_name, default_value)
 
 	def update_auditor(self, auditor_id, property_name, new_value):
-		auditor = self.db.search_auditor_by_id(auditor_id)
+		auditor = self.search_auditor_by_id(auditor_id)
 		auditor[property_name] = new_value
 		return self.db.update(auditor)
 
@@ -75,10 +75,11 @@ class VulnHandler:
 		return self.db.insert_column(property_name, default_value)
 
 	def update_vuln(self, vuln_id, property_name, new_value):
-		vuln = self.db.search_vuln_by_id(vuln_id)
+		vuln = self.search_vuln_by_id(vuln_id)
 		vuln[property_name] = new_value
 		return self.db.update(vuln)
 	
 	def del_vuln(self, vuln_id):
 		return self.db.delete(vuln_id)
+
 
