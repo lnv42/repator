@@ -72,5 +72,3 @@ class VulnHandler:
 	def update_vuln(self, vuln):
 		return self.db.update(vuln)
 
-VulnHandler()
-AuditorHandler()
