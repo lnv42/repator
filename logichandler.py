@@ -35,4 +35,4 @@ class AuditorHandler:
 		return self.db.update(auditor)
 
 
-	
+
