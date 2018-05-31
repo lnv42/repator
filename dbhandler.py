@@ -31,14 +31,14 @@ class DBHandler:
 
 	def update(self, rec):
 		return self.db.update(dict(rec), doc_ids=[rec.doc_id])
-		
 
-
+"""	
 # Testing
 db = DBHandler('/tmp/db.json')
 db.insert_record({"Name": "SQLi", "Desc": "Inject SQL stuff", "Metrics": {"Exploitability": {"AV": "N", "AC": "M", "AU": "M"}, "Impact": {"C": "C", "I": "C", "A": "C"}}})
 db.insert_record({"Name": "XSS", "Desc": "Inject JS stuff", "Metrics": {"Exploitability": {"AV": "N", "AC": "L", "AU": "M"}, "Impact": {"C": "C", "I": "C", "A": "N"}}})
 db.insert_record({"Name": "CSRF", "Desc": "Make user do stuff", "Metrics": {"Exploitability": {"AV": "N", "AC": "H", "AU": "M"}, "Impact": {"C": "N", "I": "C", "A": "N"}}})
-print(db.get_all())
+print(type(db.get_all()[0].doc_id))
 db.insert_column("Score", 5.5)
 print(db.search("Name", "XSS"))
+"""

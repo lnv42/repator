@@ -1,3 +1,5 @@
+import os.path
+
 from dbhandler import DBHandler
 
 
@@ -8,10 +10,14 @@ class AuditorHandler:
 	"""
 	
 	def __init__(self):
-		self.db = DBHandler('data/auditors.json')
+		db_path = 'data/auditors.json'
+		if not os.path.isfile(db_path):
+			self.db = DBHandler(db_path)
+			self.db.insert_record({"full_name" : "Dummy name", "phone" : "06 66 66 66 66", "email" : "dummy.name@email.com"})
+		self.db = DBHandler(db_path)
 	
 	def get_auditors(self):
-		return self.db.get_all()
+		return self.db.get_all()[1:]
 
 	def search_auditor_by_name(self, name):
 		return self.db.search("full_name", name)
@@ -38,14 +44,18 @@ class AuditorHandler:
 class VulnHandler:
 	"""
 		A vulnerability has:
-			name, desc, risk, attack vector, CVSS3.
+			name, observ, category, sub_category, risk, AV, AC, PR, UI, S, C, I, A
 	"""
 	
 	def __init__(self):
-		self.db = DBHandler('data/vulnerabilities.json')
+		db_path = 'data/vulnerabilities.json'
+		if not os.path.isfile(db_path):
+			self.db = DBHandler(db_path)
+			self.db.insert_record({"name" : "Dummy name", "category" : "cat", "sub_category" : "sub_cat",  "observ" : "long long obs", "risk" : "risk desc", "AV": "av", "AC": "ac", "PR": "pr", "UI": "ui", "S": "s", "C": "c", "I": "i", "A": "a" })
+		self.db = DBHandler(db_path)
 	
 	def get_vulns(self):
-		return self.db.get_all()
+		return self.db.get_all()[1:]
 
 	def search_vuln_by_name(self, name):
 		return self.db.search("name", name)
@@ -61,5 +71,4 @@ class VulnHandler:
 
 	def update_vuln(self, vuln):
 		return self.db.update(vuln)
-
 
