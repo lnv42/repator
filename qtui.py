@@ -6,6 +6,8 @@ import sys
 import json
 import collections
 
+from logichandler import AuditorHandler
+
 class Window(QWidget):
     def __init__(self, title, tabLst):
         super().__init__()
@@ -48,21 +50,22 @@ class Window(QWidget):
 
 
 class Tab(QWidget):
-    def __init__(self, parrent, lst):
-        super().__init__(parrent)
+    def __init__(self, parent, lst):
+        super().__init__(parent)
+        self.initTab(lst)
 
+    def initTab(self, lst):
+        self.row = 0
         self.lst = lst
         self.values = {}
         self.fields = {}
 
-        self.grid = QGridLayout()
+        self.grid = QGridLayout(self)
         self.grid.setSpacing(5)
         self.grid.setContentsMargins(5,5,5,5)
         self.grid.setAlignment(Qt.AlignTop)
 
         self.parseLst()
-
-        self.setLayout(self.grid)
 
     def changeValue(self,string):
         sender = self.sender()
@@ -103,29 +106,61 @@ class Tab(QWidget):
 
         return self.values
 
-    def addItem(self):
-        listOpt = self.lst["list"]["list"]
-        li = listOpt["class"]("", self.fields["list"])
-        if "flags" in listOpt:
-            li.setFlags(listOpt["flags"])
-        if "setData" in listOpt:
-            for arg1, arg2 in listOpt["setData"].items():
-                li.setData(arg1, arg2)
+    def addAuditor(self):
+        ah = AuditorHandler()
+        docId = ah.add_auditor()
+        lst = collections.OrderedDict()
+        addAuditor(lst, docId)
+        self.parseLst(lst)
+        for ident, field in lst.items():
+            self.lst[ident] = field
 
-        li.setFlags(li.flags()|Qt.ItemIsEditable)
+    def delAuditor(self):
+        for ident, field in self.fields.items():
+            selected = False
+            if "isSelected" in dir(field):
+                if field.isSelected():
+                    selected = True
 
-    def delItem(self):
-        lst = self.fields["list"]
-        for item in lst.selectedItems():
-            lst.takeItem(lst.row(item))
+            if "isChecked" in dir(field):
+                if field.isChecked():
+                    selected = True
 
-    def parseLst(self):
-        cpt = 0
-        for ident, field in self.lst.items():
+            if selected:
+                for row in range(1, self.row+1):
+                    if self.grid.itemAtPosition(row, 0) is not None:
+                        if self.grid.itemAtPosition(row, 0).widget().accessibleName() == ident:
+                            col = 0
+                            while self.grid.itemAtPosition(row, col) is not None:
+                                name = self.grid.itemAtPosition(row, col).widget().accessibleName()
+                                self.grid.removeWidget(self.fields[name])
+                                self.fields[name].deleteLater()
+
+                                del self.values[name]
+                                del self.fields[name]
+                                del self.lst[name]
+                                col += 1
+
+                            idDoc = int(ident[ident.find('-')+1:])
+                            ah = AuditorHandler()
+                            sh.del_auditor(idDoc)
+                            print(row)
+                            print(idDoc)
+                            print(ident)
+
+                            self.delAuditor()
+
+                            return
+
+    def parseLst(self, lst=None):
+        if lst == None:
+            lst = self.lst
+
+        for ident, field in lst.items():
             if "arg" in field:
-                w = field["class"](field["arg"])
+                w = field["class"](field["arg"], self)
             else:
-                w = field["class"]()
+                w = field["class"](self)
 
             w.setAccessibleName(ident)
             self.fields[ident] = w
@@ -166,16 +201,16 @@ class Tab(QWidget):
 
             if "label" in field:
                 l = QLabel(field["label"])
-                self.grid.addWidget(l,cpt,0)
-                self.grid.addWidget(w,cpt,1)
+                self.grid.addWidget(l,self.row,0)
+                self.grid.addWidget(w,self.row,1)
             elif "col" in field:
                 if field["col"] > 0:
-                    cpt -= 1
-                self.grid.addWidget(w,cpt+1,field["col"])
+                    self.row -= 1
+                self.grid.addWidget(w,self.row+1,field["col"])
             else:
-                self.grid.addWidget(w,cpt,0,1,2)
+                self.grid.addWidget(w,self.row,0,1,2)
 
-            cpt += 1
+            self.row += 1
 
 
 
@@ -202,19 +237,56 @@ missionLst["environment"] = {"label":"Environment",
                              "class":QLineEdit,
                              "signal":"textChanged"}
 
+
+
 auditors = collections.OrderedDict()
-auditors["list"] = {"class":QListWidget,
-                    "selectionMode":QAbstractItemView.ExtendedSelection,
-                    "list":{"class":QListWidgetItem,
-                            "lines":("John Doe", "Jack Palmer"),
-                            "setData":{Qt.CheckStateRole:Qt.Checked},
-                            "flags":Qt.ItemIsSelectable|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled|Qt.ItemIsDragEnabled|Qt.ItemIsEditable}}
 auditors["add"] = {"class":QPushButton,
                    "arg":"Add",
-                   "clicked":"addItem"}
+                   "clicked":"addAuditor",
+                   "col":0}
 auditors["delete"] = {"class":QPushButton,
                       "arg":"Delete",
-                      "clicked":"delItem"}
+                      "clicked":"delAuditor",
+                      "col":1}
+
+auditors["checkLabel"] = {"class":QLabel,
+                       "arg":"Present",
+                       "col":0}
+auditors["full_nameLabel"] = {"class":QLabel,
+                           "arg":"Full name",
+                           "col":1}
+auditors["phoneLabel"] = {"class":QLabel,
+                       "arg":"Phone number",
+                       "col":2}
+auditors["emailLabel"] = {"class":QLabel,
+                       "arg":"Email",
+                       "col":3}
+
+def addAuditor(lst, doc_id, full_name="", phone="", email=""):
+    lst["check-"+str(doc_id)] = {"class":QCheckBox,
+                                 "signal":"stateChanged",
+                                 "col":0}
+    lst["full_name-"+str(doc_id)] = {"class":QLineEdit,
+                                     "signal":"textChanged",
+                                     "arg":full_name,
+                                     "col":1}
+    lst["phone-"+str(doc_id)] = {"class":QLineEdit,
+                                 "signal":"textChanged",
+                                 "arg":phone,
+                                 "col":2}
+    lst["email-"+str(doc_id)] = {"class":QLineEdit,
+                                 "signal":"textChanged",
+                                 "arg":email,
+                                 "col":3}
+
+auditorHandler= AuditorHandler()
+auditorData =auditorHandler.get_auditors()
+
+
+for auditor in auditorData:
+    print(auditor)
+
+    addAuditor(auditors, auditor.doc_id, auditor["full_name"], auditor["phone"], auditor["email"])
 
 vulns = collections.OrderedDict()
 vulns["cat0"] = {"class":QLabel,
