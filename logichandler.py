@@ -75,6 +75,6 @@ class VulnHandler:
 	def update_vuln(self, vuln):
 		return self.db.update(vuln)
 	
-	def del_auditor(self, vuln_id):
+	def del_vuln(self, vuln_id):
 		return self.db.delete(vuln_id)
 
