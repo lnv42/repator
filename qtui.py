@@ -76,6 +76,20 @@ class Tab(QWidget):
         else:
             self.values[field] = string
 
+    def updateAuditor(self, string):
+        sender = self.sender()
+        fieldName = sender.accessibleName()
+
+        fieldTab = fieldName.split('-')
+
+        ah = AuditorHandler()
+        if "toString" in dir(string):
+            ah.update_auditor(int(fieldTab[1]), fieldTab[0], string.toString())
+            self.values[fieldName] = string.toString()
+        else:
+            ah.update_auditor(int(fieldTab[1]), fieldTab[0], string)
+            self.values[fieldName] = string
+
     def load(self, values):
         for name, value in values.items():
             if name in self.fields:
@@ -143,7 +157,7 @@ class Tab(QWidget):
 
                             idDoc = int(ident[ident.find('-')+1:])
                             ah = AuditorHandler()
-                            sh.del_auditor(idDoc)
+                            ah.del_auditor(idDoc)
                             print(row)
                             print(idDoc)
                             print(ident)
@@ -169,7 +183,10 @@ class Tab(QWidget):
                 w.setToolTip(field["help"])
 
             if "signal" in field:
-                getattr(w, field["signal"]).connect(self.changeValue)
+                if "signalFct" in field:
+                    getattr(w, field["signal"]).connect(getattr(self, field["signalFct"]))
+                else:
+                    getattr(w, field["signal"]).connect(self.changeValue)
                 if "arg" in field:
                     getattr(w, field["signal"]).emit(field["arg"])
 
@@ -268,14 +285,17 @@ def addAuditor(lst, doc_id, full_name="", phone="", email=""):
                                  "col":0}
     lst["full_name-"+str(doc_id)] = {"class":QLineEdit,
                                      "signal":"textChanged",
+                                     "signalFct":"updateAuditor",
                                      "arg":full_name,
                                      "col":1}
     lst["phone-"+str(doc_id)] = {"class":QLineEdit,
                                  "signal":"textChanged",
+                                 "signalFct":"updateAuditor",
                                  "arg":phone,
                                  "col":2}
     lst["email-"+str(doc_id)] = {"class":QLineEdit,
                                  "signal":"textChanged",
+                                 "signalFct":"updateAuditor",
                                  "arg":email,
                                  "col":3}
 
