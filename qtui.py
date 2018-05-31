@@ -127,7 +127,7 @@ class Tab(QWidget):
                     selected = True
 
             if selected:
-                for row in range(1, self.row):
+                for row in range(1, self.row+1):
                     if self.grid.itemAtPosition(row, 0) is not None:
                         if self.grid.itemAtPosition(row, 0).widget().accessibleName() == ident:
                             col = 0
@@ -141,15 +141,16 @@ class Tab(QWidget):
                                 del self.lst[name]
                                 col += 1
 
-                            break
+                            idDoc = int(ident[ident.find('-')+1:])
+                            ah = AuditorHandler()
+                            sh.del_auditor(idDoc)
+                            print(row)
+                            print(idDoc)
+                            print(ident)
 
-                idDoc = int(ident[ident.find('-')+1:])
-                print(row)
-                print(idDoc)
-                print(ident)
+                            self.delAuditor()
 
-                self.delAuditor()
-                break
+                            return
 
     def parseLst(self, lst=None):
         if lst == None:
