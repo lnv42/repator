@@ -29,7 +29,7 @@ class AuditorHandler:
 		return self.db.search("email", email)
 
 	def search_auditor_by_id(self, auditor_id):
-		return self.db.search_by_id(auditory_id)
+		return self.db.search_by_id(auditor_id)
 		
 	def add_auditor(self, auditor=None):
 		return self.db.insert_record(auditor)
@@ -39,6 +39,9 @@ class AuditorHandler:
 
 	def update_auditor(self, auditor):
 		return self.db.update(auditor)
+
+	def del_auditor(self, auditor_id):
+		return self.db.delete(auditor_id)
 
 
 class VulnHandler:
@@ -71,4 +74,7 @@ class VulnHandler:
 
 	def update_vuln(self, vuln):
 		return self.db.update(vuln)
+	
+	def del_vuln(self, vuln_id):
+		return self.db.delete(vuln_id)
 

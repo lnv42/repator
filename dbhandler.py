@@ -36,6 +36,9 @@ class DBHandler:
 	def update(self, rec):
 		return self.db.update(dict(rec), doc_ids=[rec.doc_id])
 
+	def delete(self, id_):
+		return self.db.remove(doc_ids = [id_])
+
 """	
 # Testing
 db = DBHandler('/tmp/db.json')
