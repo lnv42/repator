@@ -2,44 +2,44 @@ from tinydb import TinyDB, Query
 
 
 class DBHandler:
-	
-	def __init__(self, db_path):
-		self.path = db_path
-		self.db = TinyDB(db_path)
-	
-	def insert_column(self, name, value):
-		l = self.get_all()
-		cols = {name: value}
-		ids = []
-		for r in l:
-			ids.append(r.doc_id)
-		self.db.update(cols, doc_ids=ids)
-		return True
+    
+    def __init__(self, db_path):
+        self.path = db_path
+        self.db = TinyDB(db_path)
+    
+    def insert_column(self, name, value):
+        l = self.get_all()
+        cols = {name: value}
+        ids = []
+        for r in l:
+            ids.append(r.doc_id)
+        self.db.update(cols, doc_ids=ids)
+        return True
 
-	def insert_record(self, d):
-		if d == None:
-			d = dict(self.search_by_id(1))
-			for k in d:
-				d[k] = ""
-		return self.db.insert(d)
+    def insert_record(self, d):
+        if d == None:
+            d = dict(self.search_by_id(1))
+            for k in d:
+                d[k] = ""
+        return self.db.insert(d)
 
-	def get_all(self):
-		return self.db.all()
+    def get_all(self):
+        return self.db.all()
 
-	def search(self, name, value):
-		q = Query()
-		return self.db.search(q[name] == value)
+    def search(self, name, value):
+        q = Query()
+        return self.db.search(q[name] == value)
 
-	def search_by_id(self, id_):
-		return self.db.get(doc_id=id_)
+    def search_by_id(self, id_):
+        return self.db.get(doc_id=id_)
 
-	def update(self, rec):
-		return self.db.update(dict(rec), doc_ids=[rec.doc_id])
+    def update(self, rec):
+        return self.db.update(dict(rec), doc_ids=[rec.doc_id])
 
-	def delete(self, id_):
-		return self.db.remove(doc_ids = [id_])
+    def delete(self, id_):
+        return self.db.remove(doc_ids = [id_])
 
-"""	
+"""    
 # Testing
 db = DBHandler('/tmp/db.json')
 db.insert_record({"Name": "SQLi", "Desc": "Inject SQL stuff", "Metrics": {"Exploitability": {"AV": "N", "AC": "M", "AU": "M"}, "Impact": {"C": "C", "I": "C", "A": "C"}}})
