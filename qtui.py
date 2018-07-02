@@ -229,7 +229,53 @@ class Tab(QWidget):
 
             self.row += 1
 
+class Vulns(QWidget):
+    def __init__(self, lst, parent):
+        super().__init__(parent)
 
+        #self.lst = lst
+        #self.values = parent.values
+        #self.fields = parent.fields
+
+        #self.grid = QGridLayout()
+        #self.grid.setSpacing(5)
+        #self.grid.setContentsMargins(5,5,5,5)
+        #self.grid.setAlignment(Qt.AlignTop)
+
+        #Tab.parseLst(self)
+
+        #self.setLayout(self.grid)
+
+        tabw = QTabWidget()
+        self.tabs = {}
+
+        tabLst = collections.OrderedDict()
+        tabLst["All"] = lst
+
+        for label, lst in tabLst.items():
+            self.tabs[label] = Tab(tabw, lst)
+            tabw.addTab(self.tabs[label], label)
+
+        #saveBtn = QPushButton("Save", self)
+        #saveBtn.clicked.connect(self.save)
+
+        self.grid = QGridLayout()
+        self.grid.setSpacing(5)
+        self.grid.setContentsMargins(5,5,5,5)
+
+        self.grid.addWidget(tabw)
+        #self.grid.addWidget(saveBtn)
+
+        self.setLayout(self.grid)
+
+    def changeValue(self,string):
+        return Tab.changeValue(self, string)
+
+    #def addItem(self):
+    #    return Tab.addItem(self)
+
+    #def delItem(self):
+    #    return Tab.delItem(self)
 
 
 missionLst = collections.OrderedDict()
@@ -267,19 +313,22 @@ auditors["delete"] = {"class":QPushButton,
                       "col":1}
 
 auditors["checkLabel"] = {"class":QLabel,
-                       "arg":"Present",
-                       "col":0}
+                          "arg":"Present",
+                          "col":0}
 auditors["full_nameLabel"] = {"class":QLabel,
-                           "arg":"Full name",
-                           "col":1}
+                              "arg":"Full name",
+                              "col":1}
 auditors["phoneLabel"] = {"class":QLabel,
-                       "arg":"Phone number",
-                       "col":2}
+                          "arg":"Phone number",
+                          "col":2}
 auditors["emailLabel"] = {"class":QLabel,
-                       "arg":"Email",
-                       "col":3}
+                          "arg":"Email",
+                          "col":3}
+auditors["rolesLabel"] = {"class":QLabel,
+                          "arg":"Role",
+                          "col":4}
 
-def addAuditor(lst, doc_id, full_name="", phone="", email=""):
+def addAuditor(lst, doc_id, full_name="", phone="", email="", role=""):
     lst["check-"+str(doc_id)] = {"class":QCheckBox,
                                  "signal":"stateChanged",
                                  "col":0}
@@ -298,6 +347,11 @@ def addAuditor(lst, doc_id, full_name="", phone="", email=""):
                                  "signalFct":"updateAuditor",
                                  "arg":email,
                                  "col":3}
+    lst["role-"+str(doc_id)] = {"class":QLineEdit,
+                                "signal":"textChanged",
+                                "signalFct":"updateAuditor",
+                                "arg":role,
+                                "col":4}
 
 auditorHandler= AuditorHandler()
 auditorData =auditorHandler.get_auditors()
@@ -454,10 +508,14 @@ vulns["A2"] = {"class":QComboBox,
                "items":("N", "L", "H"),
                "col":11}
 
+vulnsClass = collections.OrderedDict()
+vulnsClass["vulns"] = {"class":Vulns,
+                       "arg":vulns}
+
 tabLst = collections.OrderedDict()
 tabLst["Mission"] = missionLst
 tabLst["Auditors"] = auditors
-tabLst["Vulns"] = vulns
+tabLst["Vulns"] = vulnsClass
 
 def main(args) :
     app=QApplication(args)

@@ -6,14 +6,15 @@ from dbhandler import DBHandler
 class AuditorHandler:
     """
         Auditor has:
-            full_name, phone, email.
+            full_name, phone, email, role.
     """
     
     def __init__(self):
         db_path = 'data/auditors.json'
         if not os.path.isfile(db_path):
             self.db = DBHandler(db_path)
-            self.db.insert_record({"full_name" : "Dummy name", "phone" : "06 66 66 66 66", "email" : "dummy.name@email.com"})
+            self.db.insert_record({"full_name" : "Dummy name", "phone" : "06 66 66 66 66", "email" : "dummy.name@email.com", "role" : "pentester"})
+
         self.db = DBHandler(db_path)
     
     def get_auditors(self):
