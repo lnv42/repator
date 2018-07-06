@@ -3,11 +3,10 @@ import json
 from collections import OrderedDict
 
 class Generator:
-
-    def __escape_str(self, s):
+    def __escape_str(s):
         return s.replace("\a", "\\a").replace("\b", "\\b").replace("\f", "\\f").replace("\r", "\\r").replace("\t", "\\t").replace("\v", "\\v")
 
-    def generate_report(self, json_content):
+    def generate_report(json_content):
         if type(json_content) is str:
             return json_content.replace("%", "\%")
 
@@ -25,24 +24,24 @@ class Generator:
         content = ""
         if type(json_content["content"]) is list:
             for e in json_content["content"]:
-                content += self.generate_report(e)
+                content += Generator.generate_report(e)
         elif type(json_content["content"]) is dict:
-            content += self.generate_report(json_content["content"])
+            content += Generator.generate_report(json_content["content"])
         elif type(json_content["content"]) is str:
-            content += self.generate_report(json_content["content"])
+            content += Generator.generate_report(json_content["content"])
 
         final_content = re.sub("##.*CONTENT##", content,final_content)
-        return self.__escape_str(final_content)
+        return Generator.__escape_str(final_content)
 
-    def __sub_dict(self, d, text):
+    def __sub_dict(d, text):
         for k in d:
             if type(d[k]) is str:
                 text = re.sub("##"+k+"##", d[k], text)
         return text
 
-    def __do_fill(self, d, content):
+    def __do_fill(d, content):
         if type(d) is str:
-            d = self.__sub_dict(content, d)
+            d = Generator.__sub_dict(content, d)
             return d
         if "content" not in d:
             return d
@@ -50,7 +49,7 @@ class Generator:
             l = []
             for e in content[d["filer"]]:
                 template = dict(d["content"][0])
-                template["content"] = self.__do_fill(template["content"],e)
+                template["content"] = Generator.__do_fill(template["content"],e)
                 l.append(template)
             d["content"] = l
             return d
@@ -59,16 +58,16 @@ class Generator:
         if type(d["content"]) is list:
             l = []
             for e in d["content"]:
-                l.append(self.__do_fill(e, content))
+                l.append(Generator.__do_fill(e, content))
             d["content"] = l
         elif type(d["content"]) is str:
-            d["content"] = self.__sub_dict(content, d["content"])
+            d["content"] = Generator.__sub_dict(content, d["content"])
         else:
-                d["content"] = self.__do_fill(d["content"], content)
+                d["content"] = Generator.__do_fill(d["content"], content)
         return d
 
 
-    def generate_json(self, json_content):
+    def generate_json(json_content):
         structure = None
         with open("content/structure.json", "r") as f:
             structure = f.read()
@@ -81,7 +80,7 @@ class Generator:
             with open("content/" + e + ".json", "r") as f:
                 file_content = f.read()
             json_file_content = json.loads(file_content)
-            res = self.__do_fill(json_file_content, json_content)
+            res = Generator.__do_fill(json_file_content, json_content)
             result_json["content"].append(res)
         return result_json
 
@@ -104,6 +103,6 @@ d = {"general": {"date_start": "11/11/11",
                    "tel": "123456",
                    "role": "skiddie"}]}
 
-p = (Generator().generate_json(d))
+p = (Generator.generate_json(d))
 #print(p)
-print(Generator().generate_report(p))
+print(Generator.generate_report(p))
