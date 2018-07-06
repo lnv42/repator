@@ -1,6 +1,8 @@
 import re
 import json
 from collections import OrderedDict
+from docx import Document
+from docx.shared import Cm
 
 class Generator:
     def __escape_str(s):
@@ -84,6 +86,56 @@ class Generator:
             result_json["content"].append(res)
         return result_json
 
+    def __cut_before(string, match):
+        return string[string.find(match)+len(match):]
+
+    def __cut_after(string, match):
+        return string[0:string.find(match)]
+
+    def __get_body(xml_content):
+        out = Generator.__cut_before(xml_content, "<w:body>")
+        out = Generator.__cut_after(out, "</w:body>")
+        return out
+
+    def generate_docx(document, json):
+
+        if isinstance(json, str):
+            document.text = json
+
+        if "type" in json:
+            if json["type"] == "table":
+                table = document.add_table(json["row"], json["col"], json["style"])
+                for row in range(0,json["row"]):
+                    for col in range(0,json["col"]):
+                        Generator.generate_docx(table.cell(row, col),
+                                                json["content"][row][col])
+                if "width" in json:
+                    col = 0
+                    for width in json["width"]:
+                        table.columns[col].width = Cm(width)
+                        col += 1
+
+            if json["type"] == "document":
+                newDoc = Document(json["path"])
+
+                for paragraph in newDoc.paragraphs:
+                    text = paragraph.text
+                    style = paragraph.style.name
+                    p = document.add_paragraph(text, style)
+                    p.paragraph_format = paragraph.paragraph_format
+
+        if "name" in json:
+            document.add_paragraph(json["name"], json["type"])
+
+        if "content" in json:
+            if isinstance(json["content"], str):
+                document.add_paragraph(json["content"], json["type"])
+            elif isinstance(json["content"], list):
+                for content in json["content"]:
+                    Generator.generate_docx(document, content)
+            else:
+                Generator.generate_docx(document, json["content"])
+
 
 d = {"general": {"date_start": "11/11/11",
                  "date_end": "12/12/12"},
@@ -105,4 +157,7 @@ d = {"general": {"date_start": "11/11/11",
 
 p = (Generator.generate_json(d))
 #print(p)
-print(Generator.generate_report(p))
+#print(Generator.generate_report(p))
+doc = Document(docx="templates/template.docx")
+Generator.generate_docx(doc, p)
+doc.save("test.docx")
