@@ -143,8 +143,6 @@ class Tab(QWidget):
         vuln = vh.search_vuln_by_id(int(docId))
         lst = collections.OrderedDict()
         addVuln(lst, docId, vuln["category"], vuln["name"])
-        help(self)
-        help(self._parent)
         self._parent.addTab(str(docId), lst)
 
     def addVuln(self):
