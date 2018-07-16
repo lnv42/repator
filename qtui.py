@@ -188,7 +188,10 @@ class Tab(QWidget):
                 else:
                     getattr(w, field["signal"]).connect(self.changeValue)
                 if "arg" in field:
-                    getattr(w, field["signal"]).emit(field["arg"])
+                    try:
+                        getattr(w, field["signal"]).emit(field["arg"])
+                    except:
+                        pass
 
             if "clicked" in field:
                 w.clicked.connect(getattr(self, field["clicked"]))
