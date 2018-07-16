@@ -249,15 +249,16 @@ class Vulns(QWidget):
 
         #self.setLayout(self.grid)
 
-        tabw = QTabWidget()
+        self.tabw = QTabWidget()
+        self.tabw.setTabsClosable(True)
+        self.tabw.tabCloseRequested.connect(self.closeTab)
         self.tabs = {}
 
         tabLst = collections.OrderedDict()
         tabLst["All"] = lst
 
         for label, lst in tabLst.items():
-            self.tabs[label] = Tab(tabw, lst)
-            tabw.addTab(self.tabs[label], label)
+            self.addTab(label, lst)
 
         #saveBtn = QPushButton("Save", self)
         #saveBtn.clicked.connect(self.save)
@@ -266,10 +267,18 @@ class Vulns(QWidget):
         self.grid.setSpacing(5)
         self.grid.setContentsMargins(5,5,5,5)
 
-        self.grid.addWidget(tabw)
+        self.grid.addWidget(self.tabw)
         #self.grid.addWidget(saveBtn)
 
         self.setLayout(self.grid)
+
+    def addTab(self, label, lst):
+        self.tabs[label] = Tab(self, lst)
+        self.tabw.addTab(self.tabs[label], label)
+
+    def closeTab(self, index):
+        del self.tabs[self.tabw.tabText(index)]
+        self.tabw.removeTab(index)
 
     def changeValue(self,string):
         return Tab.changeValue(self, string)
