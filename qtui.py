@@ -6,7 +6,7 @@ import sys
 import json
 import collections
 
-from logichandler import AuditorHandler
+from logichandler import *
 
 class Window(QWidget):
     def __init__(self, title, tabLst):
@@ -53,6 +53,7 @@ class Tab(QWidget):
     def __init__(self, parent, lst):
         super().__init__(parent)
         self.initTab(lst)
+        self._parent = parent
 
     def initTab(self, lst):
         self.row = 0
@@ -75,6 +76,21 @@ class Tab(QWidget):
             self.values[field] = string.toString()
         else:
             self.values[field] = string
+
+    def updateVuln(self, string):
+        sender = self.sender()
+        fieldName = sender.accessibleName()
+
+        fieldTab = fieldName.split('-')
+
+        vh = VulnHandler()
+        if "toString" in dir(string):
+            vh.update_vuln(int(fieldTab[1]), fieldTab[0], string.toString())
+            self.values[fieldName] = string.toString()
+        else:
+            print(fieldTab[0])
+            vh.update_vuln(int(fieldTab[1]), fieldTab[0], string)
+            self.values[fieldName] = string
 
     def updateAuditor(self, string):
         sender = self.sender()
@@ -119,6 +135,26 @@ class Tab(QWidget):
             self.values["list"] = outLst
 
         return self.values
+
+    def editVuln(self):
+        sender = self.sender()
+        docId = sender.accessibleName().split("-")[1]
+        vh = VulnHandler()
+        vuln = vh.search_vuln_by_id(int(docId))
+        lst = collections.OrderedDict()
+        addVuln(lst, docId, vuln["category"], vuln["name"])
+        help(self)
+        help(self._parent)
+        self._parent.addTab(str(docId), lst)
+
+    def addVuln(self):
+        vh = VulnHandler()
+        docId = vh.add_vuln()
+        lst = collections.OrderedDict()
+        addVuln(lst, docId)
+        self.parseLst(lst)
+        for ident, field in lst.items():
+            self.lst[ident] = field
 
     def addAuditor(self):
         ah = AuditorHandler()
