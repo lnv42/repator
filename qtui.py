@@ -411,158 +411,56 @@ for auditor in auditorData:
     addAuditor(auditors, auditor.doc_id, auditor["full_name"], auditor["phone"], auditor["email"])
 
 vulns = collections.OrderedDict()
-vulns["cat0"] = {"class":QLabel,
-                 "arg":"Category",
+vulns["add"] = {"class":QPushButton,
+                "arg":"Add",
+                "clicked":"addVuln",
+                "col":0}
+vulns["id0"] = {"class":QLabel,
+                 "arg":"ID",
                  "col":0}
+vulns["category0"] = {"class":QLabel,
+                 "arg":"Category",
+                 "col":1}
 vulns["name0"] = {"class":QLabel,
                   "arg":"Vulnerability",
-                  "col":1}
+                  "col":2}
 vulns["isVuln0"] = {"class":QLabel,
                     "arg":"Status",
-                    "col":2}
-vulns["Observation0"] = {"class":QLabel,
-                         "arg":"Observation",
-                         "col":3}
-vulns["Risk0"] = {"class":QLabel,
-                  "arg":"Risk",
-                  "col":4}
-vulns["AV0"] = {"class":QLabel,
-                "arg":"AV",
-                "col":5}
-vulns["AC0"] = {"class":QLabel,
-                "arg":"AC",
-                "col":6}
-vulns["PR0"] = {"class":QLabel,
-                "arg":"PR",
-                "col":7}
-vulns["UI0"] = {"class":QLabel,
-                "arg":"UI",
-                "col":8}
-vulns["S0"] = {"class":QLabel,
-               "arg":"S",
-               "col":9}
-vulns["C0"] = {"class":QLabel,
-               "arg":"C",
-               "col":10}
-vulns["I0"] = {"class":QLabel,
-               "arg":"I",
-               "col":11}
-vulns["A0"] = {"class":QLabel,
-               "arg":"A",
-               "col":12}
-vulns["cat1"] = {"class":QLineEdit,
-                 "signal":"textChanged",
-                 "arg":"Web Application",
-                 "col":0}
-vulns["name1"] = {"class":QLineEdit,
-                  "signal":"textChanged",
-                  "arg":"SQLi",
-                  "col":1}
-vulns["isVuln1"] = {"class":QComboBox,
-                    "signal":"currentTextChanged",
-                    "items":("NA", "Vulnerable", "Not Vulnerable", "TODO"),
-                    "col":2}
-vulns["Observation1"] = {"class":QLineEdit,
-                         "signal":"textChanged",
-                         "arg":"Some field are vulnerable to SQL injection.",
-                         "col":3}
-vulns["Risk1"] = {"class":QLineEdit,
-                  "signal":"textChanged",
-                  "arg":"SQL injection mean that data stored in the database can be leaked and may be editable. In some case code execution is possible.",
-                  "col":4}
-vulns["AV1"] = {"class":QComboBox,
-                "signal":"currentTextChanged",
-                "items":("N", "A", "L", "P"),
-                "help":"Attack Vector\nN: Network\nA: Adjacent\nL: Local\nP: Physical",
-                "col":5}
-vulns["AC1"] = {"class":QComboBox,
-                "signal":"currentTextChanged",
-                "items":("L", "H"),
-                "help":"Attack Complexity\nL: Low\nH: High",
-                "col":6}
-vulns["PR1"] = {"class":QComboBox,
-                "signal":"currentTextChanged",
-                "items":("N", "L", "H"),
-                "help":"Privileges Required\nN: None\nL: Low\nH: High",
-                "col":7}
-vulns["UI1"] = {"class":QComboBox,
-                "signal":"currentTextChanged",
-                "items":("N", "R"),
-                "help":"User Interaction\nN: None\nR: Required",
-                "col":8}
-vulns["S1"] = {"class":QComboBox,
-               "signal":"currentTextChanged",
-               "items":("U", "C"),
-               "help":"Scope\nU: Unchanged\nC: Changed",
-               "col":9}
-vulns["C1"] = {"class":QComboBox,
-               "signal":"currentTextChanged",
-               "items":("N", "L", "H"),
-               "help":"Confidentiality\nN: None\nL: Low\nH: High",
-               "col":10}
-vulns["I1"] = {"class":QComboBox,
-               "signal":"currentTextChanged",
-               "items":("N", "L", "H"),
-               "help":"Integrity\nN: None\nL: Low\nH: High",
-               "col":11}
-vulns["A1"] = {"class":QComboBox,
-               "signal":"currentTextChanged",
-               "items":("N", "L", "H"),
-               "help":"Availability\nN: None\nL: Low\nH: High",
-               "col":12}
+                    "col":3}
+def addVuln(lst, doc_id, category="", name=""):
+    lst["id-"+str(doc_id)] = {"class":QLabel,
+                              "arg":str(doc_id),
+                              "col":0}
+    lst["category-"+str(doc_id)] = {"class":QLineEdit,
+                                    "signal":"textChanged",
+                                    "signalFct":"updateVuln",
+                                    "arg":category,
+                                    "col":1}
+    lst["name-"+str(doc_id)] = {"class":QLineEdit,
+                                "signal":"textChanged",
+                                "signalFct":"updateVuln",
+                                "arg":name,
+                                "col":2}
+    lst["isVuln-"+str(doc_id)] = {"class":QComboBox,
+                                  #"signal":"currentTextChanged",
+                                  #"signalFct":"updateVuln",
+                                  "items":("NA", "Vulnerable", "Not Vulnerable", "TODO"),
+                                  "col":3}
+    lst["edit-"+str(doc_id)] = {"class":QPushButton,
+                                "signal":"clicked",
+                                "signalFct":"editVuln",
+                                "arg":"Edit",
+                                "col":4}
 
-vulns["cat2"] = {"class":QLineEdit,
-                 "signal":"textChanged",
-                 "arg":"Web Application",
-                 "col":0}
-vulns["name2"] = {"class":QLineEdit,
-                  "signal":"textChanged",
-                  "arg":"XSS",
-                  "col":1}
-vulns["isVuln2"] = {"class":QComboBox,
-                    "signal":"currentTextChanged",
-                    "items":("NA", "Vulnerable", "Not Vulnerable", "TODO"),
-                    "col":2}
-vulns["Observation2"] = {"class":QLineEdit,
-                         "signal":"textChanged",
-                         "arg":"Some field are vulnerable to HTML code injection.",
-                         "col":3}
-vulns["Risk2"] = {"class":QLineEdit,
-                  "signal":"textChanged",
-                  "arg":"XSS mean that a malicious person can tricks a user to make him execute some arbitrary code.",
-                  "col":4}
-vulns["AV2"] = {"class":QComboBox,
-                "signal":"currentTextChanged",
-                "items":("N", "A", "L", "P"),
-                "col":5}
-vulns["AC2"] = {"class":QComboBox,
-                "signal":"currentTextChanged",
-                "items":("L", "H"),
-                "col":6}
-vulns["PR2"] = {"class":QComboBox,
-                "signal":"currentTextChanged",
-                "items":("N", "L", "H"),
-                "col":7}
-vulns["UI2"] = {"class":QComboBox,
-                "signal":"currentTextChanged",
-                "items":("N", "R"),
-                "col":8}
-vulns["S2"] = {"class":QComboBox,
-               "signal":"currentTextChanged",
-               "items":("U", "C"),
-               "col":9}
-vulns["C2"] = {"class":QComboBox,
-               "signal":"currentTextChanged",
-               "items":("N", "L", "H"),
-               "col":10}
-vulns["I2"] = {"class":QComboBox,
-               "signal":"currentTextChanged",
-               "items":("N", "L", "H"),
-               "col":11}
-vulns["A2"] = {"class":QComboBox,
-               "signal":"currentTextChanged",
-               "items":("N", "L", "H"),
-               "col":12}
+vulnHandler= VulnHandler()
+vulnData =vulnHandler.get_vulns()
+
+
+for vuln in vulnData:
+    print(vuln)
+
+    addVuln(vulns, vuln.doc_id, vuln["category"], vuln["name"])
+
 
 vulnsClass = collections.OrderedDict()
 vulnsClass["vulns"] = {"class":Vulns,
