@@ -261,17 +261,23 @@ class Tab(QWidget):
                 for arg1, arg2 in field["setData"].items():
                     w.setData(arg1, arg2)
 
+            if "setCurrentText" in field:
+                w.setCurrentText(field["setCurrentText"])
+
             if "selectionMode" in field:
                 w.setSelectionMode(field["selectionMode"])
 
             if "label" in field:
                 l = QLabel(field["label"])
                 self.grid.addWidget(l,self.row,0)
-                self.grid.addWidget(w,self.row,1)
+                self.grid.addWidget(w,self.row,1, 1, -1)
             elif "col" in field:
                 if field["col"] > 0:
                     self.row -= 1
-                self.grid.addWidget(w,self.row+1,field["col"])
+                if "colspan" in field:
+                    self.grid.addWidget(w,self.row+1,field["col"], 1, field["colspan"])
+                else:
+                    self.grid.addWidget(w,self.row+1,field["col"])
             else:
                 self.grid.addWidget(w,self.row,0,1,2)
 
