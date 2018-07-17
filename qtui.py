@@ -152,8 +152,7 @@ class Tab(QWidget):
         docId = sender.accessibleName().split("-")[1]
         vh = VulnHandler()
         vuln = vh.search_vuln_by_id(int(docId))
-        lst = collections.OrderedDict()
-        addVuln(lst, docId, vuln["category"], vuln["name"])
+        lst = vulnEditing(docId, vuln)
         self._parent.addTab(str(docId), lst)
 
     def addVuln(self):
@@ -466,8 +465,7 @@ def addVuln(lst, doc_id, category="", name=""):
                                   "items":("NA", "Vulnerable", "Not Vulnerable", "TODO"),
                                   "col":3}
     lst["edit-"+str(doc_id)] = {"class":QPushButton,
-                                "signal":"clicked",
-                                "signalFct":"editVuln",
+                                "clicked":"editVuln",
                                 "arg":"Edit",
                                 "col":4}
 
@@ -480,6 +478,164 @@ for vuln in vulnData:
 
     addVuln(vulns, vuln.doc_id, vuln["category"], vuln["name"])
 
+def vulnEditing(doc_id, vuln):
+    lst = collections.OrderedDict()
+    lst["id-"+str(doc_id)] = {"class":QLabel,
+                              "label": "ID",
+                              "arg":str(doc_id)}
+    lst["category-"+str(doc_id)] = {"class":QLineEdit,
+                                    "label":"Category",
+                                    "signal":"textChanged",
+                                    "signalFct":"updateVuln",
+                                    "arg":vuln["category"]}
+    lst["name-"+str(doc_id)] = {"class":QLineEdit,
+                                "label":"Vulnerability",
+                                "signal":"textChanged",
+                                "signalFct":"updateVuln",
+                                "arg":vuln["name"]}
+    lst["isVuln-"+str(doc_id)] = {"class":QComboBox,
+                                  "label":"Status",
+                                  #"signal":"currentTextChanged",
+                                  #"signalFct":"updateVuln",
+                                  "items":("NA", "Vulnerable", "Not Vulnerable", "TODO")}
+    lst["observ-"+str(doc_id)] = {"class":QTextEdit,
+                                  "label":"Observation",
+                                  "signal":"textChanged",
+                                  "signalFct":"updateVuln",
+                                  "arg":vuln["observ"]}
+    lst["risk-"+str(doc_id)] = {"class":QTextEdit,
+                                "label":"Risk",
+                                "signal":"textChanged",
+                                "signalFct":"updateVuln",
+                                "arg":vuln["risk"]}
+    lst["CVSS"] = {"class":QLabel,
+                     "col":0}
+    lst["AV0"] = {"class":QLabel,
+                  "arg":"Attack Vector",
+                  "col":1}
+    lst["AC0"] = {"class":QLabel,
+                  "arg":"Attack Complexity",
+                  "col":2}
+    lst["PR0"] = {"class":QLabel,
+                  "arg":"Privileges Required",
+                  "col":3}
+    lst["UI0"] = {"class":QLabel,
+                  "arg":"User Interaction",
+                  "col":4}
+    lst["S0"] = {"class":QLabel,
+                 "arg":"Scope",
+                 "col":5}
+    lst["C0"] = {"class":QLabel,
+                 "arg":"Confidentiality",
+                 "col":6}
+    lst["I0"] = {"class":QLabel,
+                 "arg":"Integrity",
+                 "col":7}
+    lst["A0"] = {"class":QLabel,
+                 "arg":"Availability",
+                 "col":8}
+    lst["CVSS0"] = {"class":QLabel,
+                      "arg":"CVSSv3 metrics",
+                      "col":0}
+    lst["AV-"+str(doc_id)] = {"class":QComboBox,
+                              "signal":"currentTextChanged",
+                              "signalFct":"updateVuln",
+                              "setCurrentText":vuln["AV"],
+                              "items":("Network", "Adjacent Network", "Local", "Physical"),
+                              "col":1}
+    lst["AC-"+str(doc_id)] = {"class":QComboBox,
+                              "signal":"currentTextChanged",
+                              "signalFct":"updateVuln",
+                              "setCurrentText":vuln["AC"],
+                              "items":("Low", "High"),
+                              "col":2}
+    lst["PR-"+str(doc_id)] = {"class":QComboBox,
+                              "signal":"currentTextChanged",
+                              "signalFct":"updateVuln",
+                              "setCurrentText":vuln["PR"],
+                              "items":("None", "Low", "High"),
+                              "col":3}
+    lst["UI-"+str(doc_id)] = {"class":QComboBox,
+                              "signal":"currentTextChanged",
+                              "signalFct":"updateVuln",
+                              "setCurrentText":vuln["UI"],
+                              "items":("None", "Required"),
+                              "col":4}
+    lst["S-"+str(doc_id)] = {"class":QComboBox,
+                             "signal":"currentTextChanged",
+                             "signalFct":"updateVuln",
+                             "setCurrentText":vuln["S"],
+                             "items":("Unchanged", "Changed"),
+                             "col":5}
+    lst["C-"+str(doc_id)] = {"class":QComboBox,
+                             "signal":"currentTextChanged",
+                             "signalFct":"updateVuln",
+                             "setCurrentText":vuln["C"],
+                             "items":("None", "Low", "High"),
+                             "col":6}
+    lst["I-"+str(doc_id)] = {"class":QComboBox,
+                             "signal":"currentTextChanged",
+                             "signalFct":"updateVuln",
+                             "setCurrentText":vuln["I"],
+                             "items":("None", "Low", "High"),
+                             "col":7}
+    lst["A-"+str(doc_id)] = {"class":QComboBox,
+                             "signal":"currentTextChanged",
+                             "signalFct":"updateVuln",
+                             "setCurrentText":vuln["A"],
+                             "items":("None", "Low", "High"),
+                             "col":8}
+
+    lst["CVSS1"] = {"class":QLabel,
+                      "col":0}
+    lst["CVSS11"] = {"class":QLabel,
+                       "arg":"Base score",
+                       "col":1}
+    lst["CVSS12"] = {"class":QLabel,
+                       "arg":"Impact score",
+                       "col":2}
+    lst["CVSS13"] = {"class":QLabel,
+                       "arg":"Exploitability score",
+                       "col":3}
+
+    lst["CVSS2"] = {"class":QLabel,
+                      "arg":"CVSSv3 score",
+                      "col":0}
+    lst["CVSS-"+str(doc_id)] = {"class":QLabel,
+                                  "arg":"0",
+                                  "col":1}
+    lst["CVSSimp-"+str(doc_id)] = {"class":QLabel,
+                                   "arg":"0",
+                                   "col":2}
+    lst["CVSSexp-"+str(doc_id)] = {"class":QLabel,
+                                   "arg":"0",
+                                   "col":3}
+    lst["CVSS3"] = {"class":QLabel,
+                      "col":0}
+    lst["CVSS31"] = {"class":QLabel,
+                       "arg":"Risk level",
+                       "col":1}
+    lst["CVSS32"] = {"class":QLabel,
+                       "arg":"Impact level",
+                       "col":2}
+    lst["CVSS33"] = {"class":QLabel,
+                       "arg":"Exploitability level",
+                       "col":3}
+
+    lst["CVSS4"] = {"class":QLabel,
+                      "arg":"Risk analysis",
+                      "col":0}
+    lst["riskLvl-"+str(doc_id)] = {"class":QLabel,
+                                  "arg":"Low",
+                                  "col":1}
+    lst["impLvl-"+str(doc_id)] = {"class":QLabel,
+                                   "arg":"Low",
+                                   "col":2}
+    lst["expLvl-"+str(doc_id)] = {"class":QLabel,
+                                   "arg":"Very Easy",
+                                   "col":3}
+
+    return lst
 
 vulnsClass = collections.OrderedDict()
 vulnsClass["vulns"] = {"class":Vulns,
