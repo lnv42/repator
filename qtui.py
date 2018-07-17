@@ -276,6 +276,10 @@ class Tab(QWidget):
             if "flags" in field:
                 w.setFlags(field["flags"])
 
+            if "setLength" in field:
+                charWidth = w.fontMetrics().averageCharWidth()*1.1
+                w.setFixedWidth(int(charWidth*field["setLength"]))
+
             if "setData" in field:
                 for arg1, arg2 in field["setData"].items():
                     w.setData(arg1, arg2)
@@ -427,6 +431,7 @@ def addAuditor(lst, doc_id, full_name="", phone="", email="", role=""):
                                  "signal":"textChanged",
                                  "signalFct":"updateAuditor",
                                  "arg":phone,
+                                 "setLength":20,
                                  "col":2}
     lst["email-"+str(doc_id)] = {"class":QLineEdit,
                                  "signal":"textChanged",
@@ -437,6 +442,7 @@ def addAuditor(lst, doc_id, full_name="", phone="", email="", role=""):
                                 "signal":"textChanged",
                                 "signalFct":"updateAuditor",
                                 "arg":role,
+                                "setLength":30,
                                 "col":4}
 
 auditorHandler= AuditorHandler()
@@ -473,6 +479,7 @@ def addVuln(lst, doc_id, category="", name=""):
                                     "signal":"textChanged",
                                     "signalFct":"updateVuln",
                                     "arg":category,
+                                    "setLength":40,
                                     "col":1}
     lst["name-"+str(doc_id)] = {"class":QLineEdit,
                                 "signal":"textChanged",
