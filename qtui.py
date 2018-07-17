@@ -68,43 +68,54 @@ class Tab(QWidget):
 
         self.parseLst()
 
-    def changeValue(self,string):
+    def changeValue(self, string=None):
         sender = self.sender()
         field = sender.accessibleName()
 
+        if string is None:
+            string = sender
         if "toString" in dir(string):
-            self.values[field] = string.toString()
-        else:
-            self.values[field] = string
+            string = string.toString()
+        if "toHtml" in dir(string):
+            string = string.toHtml()
 
-    def updateVuln(self, string):
+        self.values[field] = string
+
+    def updateVuln(self, string=None):
         sender = self.sender()
         fieldName = sender.accessibleName()
 
         fieldTab = fieldName.split('-')
+
+        if string is None:
+            string = sender
+        if "toString" in dir(string):
+            string = string.toString()
+        if "toHtml" in dir(string):
+            string = string.toHtml()
 
         vh = VulnHandler()
-        if "toString" in dir(string):
-            vh.update_vuln(int(fieldTab[1]), fieldTab[0], string.toString())
-            self.values[fieldName] = string.toString()
-        else:
-            print(fieldTab[0])
-            vh.update_vuln(int(fieldTab[1]), fieldTab[0], string)
-            self.values[fieldName] = string
 
-    def updateAuditor(self, string):
+        vh.update_vuln(int(fieldTab[1]), fieldTab[0], string)
+        self.values[fieldName] = string
+
+    def updateAuditor(self, string=None):
         sender = self.sender()
         fieldName = sender.accessibleName()
 
         fieldTab = fieldName.split('-')
 
-        ah = AuditorHandler()
+        if string is None:
+            string = sender
         if "toString" in dir(string):
-            ah.update_auditor(int(fieldTab[1]), fieldTab[0], string.toString())
-            self.values[fieldName] = string.toString()
-        else:
-            ah.update_auditor(int(fieldTab[1]), fieldTab[0], string)
-            self.values[fieldName] = string
+            string = string.toString()
+        if "toHtml" in dir(string):
+            string = string.toHtml()
+
+        ah = AuditorHandler()
+
+        ah.update_auditor(int(fieldTab[1]), fieldTab[0], string)
+        self.values[fieldName] = string
 
     def load(self, values):
         for name, value in values.items():
