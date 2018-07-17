@@ -324,8 +324,12 @@ class Vulns(QWidget):
         self.setLayout(self.grid)
 
     def addTab(self, label, lst):
-        self.tabs[label] = Tab(self, lst)
-        self.tabw.addTab(self.tabs[label], label)
+        if label in self.tabs:
+            self.tabw.setCurrentWidget(self.tabs[label])
+        else:
+            self.tabs[label] = Tab(self, lst)
+            self.tabw.addTab(self.tabs[label], label)
+            self.tabw.setCurrentWidget(self.tabs[label])
 
     def closeTab(self, index):
         del self.tabs[self.tabw.tabText(index)]
