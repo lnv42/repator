@@ -60,7 +60,7 @@ class AuditorHandler:
 class VulnHandler:
     """
         A vulnerability has:
-            name, observ, category, sub_category, risk, AV, AC, PR, UI, S, C, I, A
+            name, observ, observHistory, category, sub_category, risk, riskHistory, AV, AC, PR, UI, S, C, I, A.
     """
     
     def __init__(self):
@@ -71,7 +71,9 @@ class VulnHandler:
             "category" : "",
             "sub_category" : "",
             "observ" : "",
+            "observHistory": ["New Observation"],
             "risk" : "",
+            "riskHistory": ["New Risk"],
             "AV": "Network", "AC": "Low", "PR": "None",
             "UI": "Required", "S": "Unchanged",
             "C": "None", "I": "None", "A": "None"
