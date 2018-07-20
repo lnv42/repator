@@ -94,12 +94,29 @@ class Tab(QWidget):
         if "toPlainText" in dir(string):
             string = string.toPlainText()
 
+        historyFieldName = fieldTab[0]+"History-"+fieldTab[1]
+
+        if historyFieldName in self.fields:
+            print(string)
+            print(self.fields[historyFieldName].currentText())
+            if self.fields[historyFieldName].currentText() != string:
+                self.fields[historyFieldName].setCurrentIndex(0)
+
         vh = VulnHandler()
 
         vh.update_vuln(int(fieldTab[1]), fieldTab[0], string)
         self.values[fieldName] = string
 
         self.updateCvss(fieldTab[1])
+
+    def loadHistory(self, string):
+        sender = self.sender()
+        if sender.currentIndex() != 0:
+            historyFieldName = sender.accessibleName()
+            fieldName = historyFieldName.replace("History", "")
+
+            if fieldName in self.fields:
+                self.fields[fieldName].setPlainText(string)
 
     def updateCvss(self, docId):
         if "CVSS-"+str(docId) in self.fields:
@@ -525,11 +542,21 @@ def vulnEditing(doc_id, vuln):
                                   #"signal":"currentTextChanged",
                                   #"signalFct":"updateVuln",
                                   "items":("NA", "Vulnerable", "Not Vulnerable", "TODO")}
+    lst["observHistory-"+str(doc_id)] = {"class":QComboBox,
+                                         "label":"Observation History",
+                                         "signal":"currentTextChanged",
+                                         "signalFct":"loadHistory",
+                                         "items":vuln["observHistory"]}
     lst["observ-"+str(doc_id)] = {"class":QTextEdit,
                                   "label":"Observation",
                                   "signal":"textChanged",
                                   "signalFct":"updateVuln",
                                   "arg":vuln["observ"].replace("\n", "<br/>")}
+    lst["riskHistory-"+str(doc_id)] = {"class":QComboBox,
+                                       "label":"Risk History",
+                                       "signal":"currentTextChanged",
+                                       "signalFct":"loadHistory",
+                                       "items":vuln["riskHistory"]}
     lst["risk-"+str(doc_id)] = {"class":QTextEdit,
                                 "label":"Risk",
                                 "signal":"textChanged",
