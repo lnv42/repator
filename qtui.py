@@ -702,10 +702,10 @@ def cvssv3(av, ac, pr, ui, s, c, i, a):
         imp = 6.42 * imp
         score = imp + exp
     if imp <= 0:
-        score = 0
+        score = 0.0
     if score > 10:
-        score = 10
-    return score, imp, exp
+        score = 10.0
+    return round(score,1), round(imp,1), round(exp,1)
 
 def riskLevel(av, ac, pr, ui, s, c, i, a):
     CIA = {"None": 0, "Low": 1, "High": 2}
