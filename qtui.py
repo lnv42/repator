@@ -91,8 +91,8 @@ class Tab(QWidget):
             string = sender
         if "toString" in dir(string):
             string = string.toString()
-        if "toHtml" in dir(string):
-            string = string.toHtml()
+        if "toPlainText" in dir(string):
+            string = string.toPlainText()
 
         vh = VulnHandler()
 
@@ -529,12 +529,12 @@ def vulnEditing(doc_id, vuln):
                                   "label":"Observation",
                                   "signal":"textChanged",
                                   "signalFct":"updateVuln",
-                                  "arg":vuln["observ"]}
+                                  "arg":vuln["observ"].replace("\n", "<br/>")}
     lst["risk-"+str(doc_id)] = {"class":QTextEdit,
                                 "label":"Risk",
                                 "signal":"textChanged",
                                 "signalFct":"updateVuln",
-                                "arg":vuln["risk"]}
+                                "arg":vuln["risk"].replace("\n", "<br/>")}
     lst["CVSS"] = {"class":QLabel,
                      "col":0}
     lst["AV0"] = {"class":QLabel,
