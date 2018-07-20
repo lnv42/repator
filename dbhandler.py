@@ -12,6 +12,8 @@ class DBHandler:
         cols = {name: value}
         ids = []
         for r in l:
+            if name in r:
+                return False # column already exist
             ids.append(r.doc_id)
         self.db.update(cols, doc_ids=ids)
         return True

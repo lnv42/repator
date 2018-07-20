@@ -11,11 +11,21 @@ class AuditorHandler:
     
     def __init__(self):
         db_path = 'data/auditors.json'
+
+        defaultValues = {
+            "full_name" : "Dummy name",
+            "phone" : "+33 1 23 45 67 89",
+            "email" : "dummy.name@email.com",
+            "role" : "Pentester"
+        }
+
         if not os.path.isfile(db_path):
             self.db = DBHandler(db_path)
-            self.db.insert_record({"full_name" : "Dummy name", "phone" : "06 66 66 66 66", "email" : "dummy.name@email.com", "role" : "pentester"})
-
-        self.db = DBHandler(db_path)
+            self.db.insert_record(defaultValues)
+        else:
+            self.db = DBHandler(db_path)
+            for name, value in defaultValues.items():
+                self.add_property(name, value)
     
     def get_auditors(self):
         return self.db.get_all()[1:]
@@ -55,10 +65,25 @@ class VulnHandler:
     
     def __init__(self):
         db_path = 'data/vulnerabilities.json'
+
+        defaultValues = {
+            "name" : "Dummy name",
+            "category" : "",
+            "sub_category" : "",
+            "observ" : "",
+            "risk" : "",
+            "AV": "Network", "AC": "Low", "PR": "None",
+            "UI": "Required", "S": "Unchanged",
+            "C": "None", "I": "None", "A": "None"
+        }
+
         if not os.path.isfile(db_path):
             self.db = DBHandler(db_path)
-            self.db.insert_record({"name" : "Dummy name", "category" : "cat", "sub_category" : "sub_cat",  "observ" : "long long obs", "risk" : "risk desc", "AV": "av", "AC": "ac", "PR": "pr", "UI": "ui", "S": "s", "C": "c", "I": "i", "A": "a" })
-        self.db = DBHandler(db_path)
+            self.db.insert_record(defaultValues)
+        else:
+            self.db = DBHandler(db_path)
+            for name, value in defaultValues.items():
+                self.add_property(name, value)
     
     def get_vulns(self):
         return self.db.get_all()[1:]
