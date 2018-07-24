@@ -118,6 +118,26 @@ class Tab(QWidget):
             if fieldName in self.fields:
                 self.fields[fieldName].setPlainText(string)
 
+    def saveHistory(self, historyFieldName):
+        if self.fields[historyFieldName].currentIndex() == 0:
+            fieldTab = historyFieldName.split('-')
+            fieldName = historyFieldName.replace("History", "")
+
+            value = self.fields[fieldName].toPlainText()
+
+            vh = VulnHandler()
+            history = vh.search_vuln_by_id(int(fieldTab[1]))[fieldTab[0]]
+
+            if value not in history:
+                history.append(value)
+
+            vh.update_vuln(int(fieldTab[1]), fieldTab[0], history)
+
+    def saveHistories(self):
+        for name in self.fields.keys():
+            if name.find("History-") > 0:
+                self.saveHistory(name)
+
     def updateCvss(self, docId):
         if "CVSS-"+str(docId) in self.fields:
             cvss, imp, exp, rLvl, iLvl, eLvl = cvssFromValues(self.values, docId)
@@ -372,6 +392,7 @@ class Vulns(QWidget):
             self.tabw.setCurrentWidget(self.tabs[label])
 
     def closeTab(self, index):
+        self.tabs[self.tabw.tabText(index)].saveHistories()
         del self.tabs[self.tabw.tabText(index)]
         self.tabw.removeTab(index)
 
