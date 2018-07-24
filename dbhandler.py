@@ -16,7 +16,7 @@ class DBHandler:
 
     def __init__(self, db_path, defaultValues={}):
         if not path.exists(path.dirname(db_path)):
-            mkdir(path.dirname(db_path), 0750)
+            mkdir(path.dirname(db_path), 0o750)
 
         newDb = not path.isfile(db_path)
 
