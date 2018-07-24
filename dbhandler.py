@@ -1,12 +1,61 @@
 from tinydb import TinyDB, Query
+from os import path
 
+
+DB_AUDITORS = "data/auditors.json"
+DB_CLIENTS = "data/clients.json"
+DB_VULNS = "data/vulnerabilities.json"
+
+DB_AUDITORS_DEFAULT = {
+    "full_name" : "Dummy name",
+    "phone" : "+33 1 23 45 67 89",
+    "email" : "dummy.name@email.com",
+    "role" : "Pentester"
+}
+
+DB_CLIENTS_DEFAULT = {
+    "full_name" : "Dummy name",
+    "phone" : "+33 1 23 45 67 89",
+    "email" : "dummy.name@email.com",
+    "role" : "CISO"
+}
+
+DB_VULNS_DEFAULT = {
+    "name" : "Dummy name",
+    "category" : "",
+    "sub_category" : "",
+    "observ" : "",
+    "observHistory": ["New Observation"],
+    "risk" : "",
+    "riskHistory": ["New Risk"],
+    "AV": "Network", "AC": "Low", "PR": "None",
+    "UI": "Required", "S": "Unchanged",
+    "C": "None", "I": "None", "A": "None"
+}
 
 class DBHandler:
-    
-    def __init__(self, db_path):
+
+    def Auditors():
+        return DBHandler(DB_AUDITORS, DB_AUDITORS_DEFAULT)
+
+    def Clients():
+        return DBHandler(DB_CLIENTS, DB_CLIENTS_DEFAULT)
+
+    def Vulns():
+        return DBHandler(DB_VULNS, DB_VULNS_DEFAULT)
+
+    def __init__(self, db_path, defaultValues={}):
+        newDb = not path.isfile(db_path)
+
         self.path = db_path
         self.db = TinyDB(db_path)
-    
+
+        if newDb:
+            self.db.insert_record(defaultValues)
+        else:
+            for name, value in defaultValues.items():
+                self.insert_column(name, value)
+
     def insert_column(self, name, value):
         l = self.get_all()
         cols = {name: value}
@@ -26,7 +75,7 @@ class DBHandler:
         return self.db.insert(d)
 
     def get_all(self):
-        return self.db.all()
+        return self.db.all()[1:]
 
     def search(self, name, value):
         q = Query()
@@ -35,8 +84,10 @@ class DBHandler:
     def search_by_id(self, id_):
         return self.db.get(doc_id=id_)
 
-    def update(self, rec):
-        return self.db.update(dict(rec), doc_ids=[rec.doc_id])
+    def update(self, id_, name, value):
+        record = self.search_by_id(id_)
+        record[name] = value
+        return self.db.update(record, doc_ids=[id_])
 
     def delete(self, id_):
         return self.db.remove(doc_ids = [id_])

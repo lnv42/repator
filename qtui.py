@@ -6,7 +6,7 @@ import sys
 import json
 import collections
 
-from logichandler import *
+from dbhandler import *
 
 class Window(QWidget):
     def __init__(self, title, tabLst):
@@ -102,9 +102,9 @@ class Tab(QWidget):
             if self.fields[historyFieldName].currentText() != string:
                 self.fields[historyFieldName].setCurrentIndex(0)
 
-        vh = VulnHandler()
+        db = DBHandler.Vulns()
 
-        vh.update_vuln(int(fieldTab[1]), fieldTab[0], string)
+        db.update(int(fieldTab[1]), fieldTab[0], string)
         self.values[fieldName] = string
 
         self.updateCvss(fieldTab[1])
@@ -125,13 +125,13 @@ class Tab(QWidget):
 
             value = self.fields[fieldName].toPlainText()
 
-            vh = VulnHandler()
-            history = vh.search_vuln_by_id(int(fieldTab[1]))[fieldTab[0]]
+            db = DBHandler.Vulns()
+            history = db.search_by_id(int(fieldTab[1]))[fieldTab[0]]
 
             if value not in history:
                 history.append(value)
 
-            vh.update_vuln(int(fieldTab[1]), fieldTab[0], history)
+            db.update(int(fieldTab[1]), fieldTab[0], history)
 
     def saveHistories(self):
         for name in self.fields.keys():
@@ -168,9 +168,9 @@ class Tab(QWidget):
         if "toHtml" in dir(string):
             string = string.toHtml()
 
-        ah = AuditorHandler()
+        db = DBHandler.Auditors()
 
-        ah.update_auditor(int(fieldTab[1]), fieldTab[0], string)
+        db.update(int(fieldTab[1]), fieldTab[0], string)
         self.values[fieldName] = string
 
     def load(self, values):
@@ -206,15 +206,15 @@ class Tab(QWidget):
     def editVuln(self):
         sender = self.sender()
         docId = sender.accessibleName().split("-")[1]
-        vh = VulnHandler()
-        vuln = vh.search_vuln_by_id(int(docId))
+        db = DBHandler.Vulns()
+        vuln = db.search_by_id(int(docId))
         lst = vulnEditing(docId, vuln)
         self._parent.addTab(str(docId), lst)
         self._parent.tabs[str(docId)].updateCvss(docId)
 
     def addVuln(self):
-        vh = VulnHandler()
-        docId = vh.add_vuln()
+        db = DBHandler.Vulns()
+        docId = db.insert_record()
         lst = collections.OrderedDict()
         addVuln(lst, docId)
         self.parseLst(lst)
@@ -222,8 +222,8 @@ class Tab(QWidget):
             self.lst[ident] = field
 
     def addAuditor(self):
-        ah = AuditorHandler()
-        docId = ah.add_auditor()
+        db = DBHandler.Auditor()
+        docId = db.insert_record()
         lst = collections.OrderedDict()
         addAuditor(lst, docId)
         self.parseLst(lst)
@@ -257,8 +257,8 @@ class Tab(QWidget):
                                 col += 1
 
                             idDoc = int(ident[ident.find('-')+1:])
-                            ah = AuditorHandler()
-                            ah.del_auditor(idDoc)
+                            db = DBHandler.Auditors()
+                            db.delete(idDoc)
                             print(row)
                             print(idDoc)
                             print(ident)
@@ -483,8 +483,8 @@ def addAuditor(lst, doc_id, full_name="", phone="", email="", role=""):
                                 "setLength":30,
                                 "col":4}
 
-auditorHandler= AuditorHandler()
-auditorData =auditorHandler.get_auditors()
+db = DBHandler.Auditors()
+auditorData = db.get_all()
 
 
 for auditor in auditorData:
@@ -534,8 +534,8 @@ def addVuln(lst, doc_id, category="", name=""):
                                 "arg":"Edit",
                                 "col":4}
 
-vulnHandler= VulnHandler()
-vulnData =vulnHandler.get_vulns()
+db = DBHandler.Vulns()
+vulnData = db.get_all()
 
 
 for vuln in vulnData:
