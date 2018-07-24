@@ -19,20 +19,20 @@ VULNS["isVuln0"] = {"class":QLabel,
                     "arg":"Status",
                     "col":3}
 
-def addVuln(lst, doc_id, category="", name=""):
+def addVuln(lst, doc_id, vuln):
     lst["id-"+str(doc_id)] = {"class":QLabel,
                               "arg":str(doc_id),
                               "col":0}
     lst["category-"+str(doc_id)] = {"class":QLineEdit,
                                     "signal":"textChanged",
                                     "signalFct":"updateVuln",
-                                    "arg":category,
+                                    "arg":vuln["category"],
                                     "setLength":40,
                                     "col":1}
     lst["name-"+str(doc_id)] = {"class":QLineEdit,
                                 "signal":"textChanged",
                                 "signalFct":"updateVuln",
-                                "arg":name,
+                                "arg":vuln["name"],
                                 "col":2}
     lst["isVuln-"+str(doc_id)] = {"class":QComboBox,
                                   #"signal":"currentTextChanged",

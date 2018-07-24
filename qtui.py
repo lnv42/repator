@@ -2,6 +2,7 @@
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QDate, Qt
+from copy import copy
 import sys
 import json
 import collections
@@ -20,8 +21,11 @@ class Window(QWidget):
         tabw = QTabWidget()
         self.tabs = {}
 
-        for label, lst in tabLst.items():
-            self.tabs[label] = Tab(tabw, lst)
+        for label, tab in tabLst.items():
+            if "db" in tab:
+                self.tabs[label] = Tab(tabw, tab["lst"], tab["db"])
+            else:
+                self.tabs[label] = Tab(tabw, tab)
             tabw.addTab(self.tabs[label], label)
 
         saveBtn = QPushButton("Save", self)
@@ -52,8 +56,9 @@ class Window(QWidget):
 
 
 class Tab(QWidget):
-    def __init__(self, parent, lst):
+    def __init__(self, parent, lst, db=None):
         super().__init__(parent)
+        self.db = db
         self.initTab(lst)
         self._parent = parent
 
@@ -104,9 +109,7 @@ class Tab(QWidget):
             if self.fields[historyFieldName].currentText() != string:
                 self.fields[historyFieldName].setCurrentIndex(0)
 
-        db = DBHandler.Vulns()
-
-        db.update(int(fieldTab[1]), fieldTab[0], string)
+        self.db.update(int(fieldTab[1]), fieldTab[0], string)
         self.values[fieldName] = string
 
         self.updateCvss(fieldTab[1])
@@ -127,13 +130,12 @@ class Tab(QWidget):
 
             value = self.fields[fieldName].toPlainText()
 
-            db = DBHandler.Vulns()
-            history = db.search_by_id(int(fieldTab[1]))[fieldTab[0]]
+            history = self.db.search_by_id(int(fieldTab[1]))[fieldTab[0]]
 
             if value not in history:
                 history.append(value)
 
-            db.update(int(fieldTab[1]), fieldTab[0], history)
+            self.db.update(int(fieldTab[1]), fieldTab[0], history)
 
     def saveHistories(self):
         for name in self.fields.keys():
@@ -170,9 +172,7 @@ class Tab(QWidget):
         if "toHtml" in dir(string):
             string = string.toHtml()
 
-        db = DBHandler.Auditors()
-
-        db.update(int(fieldTab[1]), fieldTab[0], string)
+        self.db.update(int(fieldTab[1]), fieldTab[0], string)
         self.values[fieldName] = string
 
     def load(self, values):
@@ -208,26 +208,23 @@ class Tab(QWidget):
     def editVuln(self):
         sender = self.sender()
         docId = sender.accessibleName().split("-")[1]
-        db = DBHandler.Vulns()
-        vuln = db.search_by_id(int(docId))
+        vuln = self.db.search_by_id(int(docId))
         lst = vulnEditing(docId, vuln)
         self._parent.addTab(str(docId), lst)
         self._parent.tabs[str(docId)].updateCvss(docId)
 
     def addVuln(self):
-        db = DBHandler.Vulns()
-        docId = db.insert_record()
+        docId = self.db.insert_record()
         lst = collections.OrderedDict()
-        addVuln(lst, docId)
+        addVuln(lst, docId, self.db.search_by_id(docId))
         self.parseLst(lst)
         for ident, field in lst.items():
             self.lst[ident] = field
 
     def addAuditor(self):
-        db = DBHandler.Auditors()
-        docId = db.insert_record()
+        docId = self.db.insert_record()
         lst = collections.OrderedDict()
-        addAuditor(lst, docId)
+        addPeople(lst, docId, self.db.search_by_id(docId))
         self.parseLst(lst)
         for ident, field in lst.items():
             self.lst[ident] = field
@@ -259,11 +256,10 @@ class Tab(QWidget):
                                 col += 1
 
                             idDoc = int(ident[ident.find('-')+1:])
-                            db = DBHandler.Auditors()
-                            db.delete(idDoc)
                             print(row)
                             print(idDoc)
                             print(ident)
+                            self.db.delete(idDoc)
 
                             self.delAuditor()
 
@@ -346,8 +342,11 @@ class Tab(QWidget):
             self.row += 1
 
 class Vulns(QWidget):
-    def __init__(self, lst, parent):
+    def __init__(self, args, parent):
         super().__init__(parent)
+
+        lst = args[0]
+        db = args[1]
 
         #self.lst = lst
         #self.values = parent.values
@@ -371,7 +370,7 @@ class Vulns(QWidget):
         tabLst["All"] = lst
 
         for label, lst in tabLst.items():
-            self.addTab(label, lst)
+            self.addTab(label, lst, db)
 
         #saveBtn = QPushButton("Save", self)
         #saveBtn.clicked.connect(self.save)
@@ -385,11 +384,11 @@ class Vulns(QWidget):
 
         self.setLayout(self.grid)
 
-    def addTab(self, label, lst):
+    def addTab(self, label, lst, db):
         if label in self.tabs:
             self.tabw.setCurrentWidget(self.tabs[label])
         else:
-            self.tabs[label] = Tab(self, lst)
+            self.tabs[label] = Tab(self, lst, db)
             self.tabw.addTab(self.tabs[label], label)
             self.tabw.setCurrentWidget(self.tabs[label])
 
@@ -408,26 +407,30 @@ class Vulns(QWidget):
     #    return Tab.delItem(self)
 
 def main(args) :
-    auditors = AUDITORS
-    db = DBHandler.Auditors()
-    auditorData = db.get_all()
+    auditors = copy(PEOPLES)
+    dba = DBHandler.Auditors()
+    auditorData = dba.get_all()
     for auditor in auditorData:
-        addAuditor(auditors, auditor.doc_id, auditor["full_name"], auditor["phone"], auditor["email"])
+        addPeople(auditors, auditor.doc_id, auditor)
 
-    vulns = VULNS
-    db = DBHandler.Vulns()
-    vulnData = db.get_all()
+    clients = copy(PEOPLES)
+    dbc = DBHandler.Clients()
+    clientData = dbc.get_all()
+    print(clientData)
+    for client in clientData:
+        addPeople(clients, client.doc_id, client)
+
+    vulns = copy(VULNS)
+    dbv = DBHandler.Vulns()
+    vulnData = dbv.get_all()
     for vuln in vulnData:
-        addVuln(vulns, vuln.doc_id, vuln["category"], vuln["name"])
-
-    vulnsClass = collections.OrderedDict()
-    vulnsClass["vulns"] = {"class":Vulns,
-                       "arg":vulns}
+        addVuln(vulns, vuln.doc_id, vuln)
 
     tabLst = collections.OrderedDict()
-    tabLst["Mission"] = MISSION
-    tabLst["Auditors"] = auditors
-    tabLst["Vulns"] = vulnsClass
+    tabLst["Mission"] = copy(MISSION)
+    tabLst["Auditors"] = {"lst":auditors, "db":dba}
+    tabLst["Clients"] = {"lst":clients, "db":dbc}
+    tabLst["Vulns"] = {"vulns":{"class":Vulns,"arg":(vulns, dbv)}}
 
     app=QApplication(args)
     window = Window('Repator', tabLst)
