@@ -6,6 +6,7 @@ import sys
 import json
 import collections
 
+from conf.ui import *
 from dbhandler import *
 
 class Window(QWidget):
@@ -405,313 +406,6 @@ class Vulns(QWidget):
     #def delItem(self):
     #    return Tab.delItem(self)
 
-
-missionLst = collections.OrderedDict()
-missionLst["client"] = {"label":"Client",
-                        "class":QLineEdit,
-                        "signal":"textChanged"}
-missionLst["target"] = {"label":"Cible",
-                        "class":QLineEdit,
-                        "signal":"textChanged"}
-missionLst["code"] = {"label":"Code",
-                      "class":QLineEdit,
-                      "signal":"textChanged"}
-missionLst["dateStart"] = {"label":"Date de début",
-                           "class":QDateEdit,
-                           "signal":"dateChanged",
-                           "arg":QDate.currentDate()}
-missionLst["dateEnd"] = {"label":"Date de fin",
-                         "class":QDateEdit,
-                         "signal":"dateChanged",
-                         "arg":QDate.currentDate()}
-missionLst["environment"] = {"label":"Environment",
-                             "class":QLineEdit,
-                             "signal":"textChanged"}
-
-
-
-auditors = collections.OrderedDict()
-auditors["add"] = {"class":QPushButton,
-                   "arg":"Add",
-                   "clicked":"addAuditor",
-                   "col":0}
-auditors["delete"] = {"class":QPushButton,
-                      "arg":"Delete",
-                      "clicked":"delAuditor",
-                      "col":1}
-
-auditors["checkLabel"] = {"class":QLabel,
-                          "arg":"Present",
-                          "col":0}
-auditors["full_nameLabel"] = {"class":QLabel,
-                              "arg":"Full name",
-                              "col":1}
-auditors["phoneLabel"] = {"class":QLabel,
-                          "arg":"Phone number",
-                          "col":2}
-auditors["emailLabel"] = {"class":QLabel,
-                          "arg":"Email",
-                          "col":3}
-auditors["rolesLabel"] = {"class":QLabel,
-                          "arg":"Role",
-                          "col":4}
-
-def addAuditor(lst, doc_id, full_name="", phone="", email="", role=""):
-    lst["check-"+str(doc_id)] = {"class":QCheckBox,
-                                 "signal":"stateChanged",
-                                 "col":0}
-    lst["full_name-"+str(doc_id)] = {"class":QLineEdit,
-                                     "signal":"textChanged",
-                                     "signalFct":"updateAuditor",
-                                     "arg":full_name,
-                                     "col":1}
-    lst["phone-"+str(doc_id)] = {"class":QLineEdit,
-                                 "signal":"textChanged",
-                                 "signalFct":"updateAuditor",
-                                 "arg":phone,
-                                 "setLength":20,
-                                 "col":2}
-    lst["email-"+str(doc_id)] = {"class":QLineEdit,
-                                 "signal":"textChanged",
-                                 "signalFct":"updateAuditor",
-                                 "arg":email,
-                                 "col":3}
-    lst["role-"+str(doc_id)] = {"class":QLineEdit,
-                                "signal":"textChanged",
-                                "signalFct":"updateAuditor",
-                                "arg":role,
-                                "setLength":30,
-                                "col":4}
-
-db = DBHandler.Auditors()
-auditorData = db.get_all()
-
-
-for auditor in auditorData:
-    print(auditor)
-
-    addAuditor(auditors, auditor.doc_id, auditor["full_name"], auditor["phone"], auditor["email"])
-
-vulns = collections.OrderedDict()
-vulns["add"] = {"class":QPushButton,
-                "arg":"Add",
-                "clicked":"addVuln",
-                "col":0}
-vulns["id0"] = {"class":QLabel,
-                 "arg":"ID",
-                 "col":0}
-vulns["category0"] = {"class":QLabel,
-                 "arg":"Category",
-                 "col":1}
-vulns["name0"] = {"class":QLabel,
-                  "arg":"Vulnerability",
-                  "col":2}
-vulns["isVuln0"] = {"class":QLabel,
-                    "arg":"Status",
-                    "col":3}
-def addVuln(lst, doc_id, category="", name=""):
-    lst["id-"+str(doc_id)] = {"class":QLabel,
-                              "arg":str(doc_id),
-                              "col":0}
-    lst["category-"+str(doc_id)] = {"class":QLineEdit,
-                                    "signal":"textChanged",
-                                    "signalFct":"updateVuln",
-                                    "arg":category,
-                                    "setLength":40,
-                                    "col":1}
-    lst["name-"+str(doc_id)] = {"class":QLineEdit,
-                                "signal":"textChanged",
-                                "signalFct":"updateVuln",
-                                "arg":name,
-                                "col":2}
-    lst["isVuln-"+str(doc_id)] = {"class":QComboBox,
-                                  #"signal":"currentTextChanged",
-                                  #"signalFct":"updateVuln",
-                                  "items":("NA", "Vulnerable", "Not Vulnerable", "TODO"),
-                                  "col":3}
-    lst["edit-"+str(doc_id)] = {"class":QPushButton,
-                                "clicked":"editVuln",
-                                "arg":"Edit",
-                                "col":4}
-
-db = DBHandler.Vulns()
-vulnData = db.get_all()
-
-
-for vuln in vulnData:
-    print(vuln)
-
-    addVuln(vulns, vuln.doc_id, vuln["category"], vuln["name"])
-
-def vulnEditing(doc_id, vuln):
-    lst = collections.OrderedDict()
-    lst["id-"+str(doc_id)] = {"class":QLabel,
-                              "label": "ID",
-                              "arg":str(doc_id)}
-    lst["category-"+str(doc_id)] = {"class":QLineEdit,
-                                    "label":"Category",
-                                    "signal":"textChanged",
-                                    "signalFct":"updateVuln",
-                                    "arg":vuln["category"]}
-    lst["name-"+str(doc_id)] = {"class":QLineEdit,
-                                "label":"Vulnerability",
-                                "signal":"textChanged",
-                                "signalFct":"updateVuln",
-                                "arg":vuln["name"]}
-    lst["isVuln-"+str(doc_id)] = {"class":QComboBox,
-                                  "label":"Status",
-                                  #"signal":"currentTextChanged",
-                                  #"signalFct":"updateVuln",
-                                  "items":("NA", "Vulnerable", "Not Vulnerable", "TODO")}
-    lst["observHistory-"+str(doc_id)] = {"class":QComboBox,
-                                         "label":"Observation History",
-                                         "signal":"currentTextChanged",
-                                         "signalFct":"loadHistory",
-                                         "items":vuln["observHistory"]}
-    lst["observ-"+str(doc_id)] = {"class":QTextEdit,
-                                  "label":"Observation",
-                                  "signal":"textChanged",
-                                  "signalFct":"updateVuln",
-                                  "arg":vuln["observ"].replace("\n", "<br/>")}
-    lst["riskHistory-"+str(doc_id)] = {"class":QComboBox,
-                                       "label":"Risk History",
-                                       "signal":"currentTextChanged",
-                                       "signalFct":"loadHistory",
-                                       "items":vuln["riskHistory"]}
-    lst["risk-"+str(doc_id)] = {"class":QTextEdit,
-                                "label":"Risk",
-                                "signal":"textChanged",
-                                "signalFct":"updateVuln",
-                                "arg":vuln["risk"].replace("\n", "<br/>")}
-    lst["CVSS"] = {"class":QLabel,
-                     "col":0}
-    lst["AV0"] = {"class":QLabel,
-                  "arg":"Attack Vector",
-                  "col":1}
-    lst["AC0"] = {"class":QLabel,
-                  "arg":"Attack Complexity",
-                  "col":2}
-    lst["PR0"] = {"class":QLabel,
-                  "arg":"Privileges Required",
-                  "col":3}
-    lst["UI0"] = {"class":QLabel,
-                  "arg":"User Interaction",
-                  "col":4}
-    lst["S0"] = {"class":QLabel,
-                 "arg":"Scope",
-                 "col":5}
-    lst["C0"] = {"class":QLabel,
-                 "arg":"Confidentiality",
-                 "col":6}
-    lst["I0"] = {"class":QLabel,
-                 "arg":"Integrity",
-                 "col":7}
-    lst["A0"] = {"class":QLabel,
-                 "arg":"Availability",
-                 "col":8}
-    lst["CVSS0"] = {"class":QLabel,
-                      "arg":"CVSSv3 metrics",
-                      "col":0}
-    lst["AV-"+str(doc_id)] = {"class":QComboBox,
-                              "signal":"currentTextChanged",
-                              "signalFct":"updateVuln",
-                              "setCurrentText":vuln["AV"],
-                              "items":("Network", "Adjacent Network", "Local", "Physical"),
-                              "col":1}
-    lst["AC-"+str(doc_id)] = {"class":QComboBox,
-                              "signal":"currentTextChanged",
-                              "signalFct":"updateVuln",
-                              "setCurrentText":vuln["AC"],
-                              "items":("Low", "High"),
-                              "col":2}
-    lst["PR-"+str(doc_id)] = {"class":QComboBox,
-                              "signal":"currentTextChanged",
-                              "signalFct":"updateVuln",
-                              "setCurrentText":vuln["PR"],
-                              "items":("None", "Low", "High"),
-                              "col":3}
-    lst["UI-"+str(doc_id)] = {"class":QComboBox,
-                              "signal":"currentTextChanged",
-                              "signalFct":"updateVuln",
-                              "setCurrentText":vuln["UI"],
-                              "items":("None", "Required"),
-                              "col":4}
-    lst["S-"+str(doc_id)] = {"class":QComboBox,
-                             "signal":"currentTextChanged",
-                             "signalFct":"updateVuln",
-                             "setCurrentText":vuln["S"],
-                             "items":("Unchanged", "Changed"),
-                             "col":5}
-    lst["C-"+str(doc_id)] = {"class":QComboBox,
-                             "signal":"currentTextChanged",
-                             "signalFct":"updateVuln",
-                             "setCurrentText":vuln["C"],
-                             "items":("None", "Low", "High"),
-                             "col":6}
-    lst["I-"+str(doc_id)] = {"class":QComboBox,
-                             "signal":"currentTextChanged",
-                             "signalFct":"updateVuln",
-                             "setCurrentText":vuln["I"],
-                             "items":("None", "Low", "High"),
-                             "col":7}
-    lst["A-"+str(doc_id)] = {"class":QComboBox,
-                             "signal":"currentTextChanged",
-                             "signalFct":"updateVuln",
-                             "setCurrentText":vuln["A"],
-                             "items":("None", "Low", "High"),
-                             "col":8}
-
-    lst["CVSS1"] = {"class":QLabel,
-                      "col":0}
-    lst["CVSS11"] = {"class":QLabel,
-                       "arg":"Base score",
-                       "col":1}
-    lst["CVSS12"] = {"class":QLabel,
-                       "arg":"Impact score",
-                       "col":2}
-    lst["CVSS13"] = {"class":QLabel,
-                       "arg":"Exploitability score",
-                       "col":3}
-
-    lst["CVSS2"] = {"class":QLabel,
-                      "arg":"CVSSv3 score",
-                      "col":0}
-    lst["CVSS-"+str(doc_id)] = {"class":QLabel,
-                                  "arg":"0",
-                                  "col":1}
-    lst["CVSSimp-"+str(doc_id)] = {"class":QLabel,
-                                   "arg":"0",
-                                   "col":2}
-    lst["CVSSexp-"+str(doc_id)] = {"class":QLabel,
-                                   "arg":"0",
-                                   "col":3}
-    lst["CVSS3"] = {"class":QLabel,
-                      "col":0}
-    lst["CVSS31"] = {"class":QLabel,
-                       "arg":"Risk level",
-                       "col":1}
-    lst["CVSS32"] = {"class":QLabel,
-                       "arg":"Impact level",
-                       "col":2}
-    lst["CVSS33"] = {"class":QLabel,
-                       "arg":"Exploitability level",
-                       "col":3}
-
-    lst["CVSS4"] = {"class":QLabel,
-                      "arg":"Risk analysis",
-                      "col":0}
-    lst["riskLvl-"+str(doc_id)] = {"class":QLabel,
-                                  "arg":"Low",
-                                  "col":1}
-    lst["impLvl-"+str(doc_id)] = {"class":QLabel,
-                                   "arg":"Low",
-                                   "col":2}
-    lst["expLvl-"+str(doc_id)] = {"class":QLabel,
-                                   "arg":"Very Easy",
-                                   "col":3}
-
-    return lst
-
 def cvssFromValues(v, doc_id):
     av = v["AV-"+str(doc_id)]
     ac = v["AC-"+str(doc_id)]
@@ -805,16 +499,28 @@ def riskLevel(av, ac, pr, ui, s, c, i, a):
 
     return RLVL[rLvl], ILVL[iLvl], ELVL[eLvl]
 
-vulnsClass = collections.OrderedDict()
-vulnsClass["vulns"] = {"class":Vulns,
+def main(args) :
+    auditors = AUDITORS
+    db = DBHandler.Auditors()
+    auditorData = db.get_all()
+    for auditor in auditorData:
+        addAuditor(auditors, auditor.doc_id, auditor["full_name"], auditor["phone"], auditor["email"])
+
+    vulns = VULNS
+    db = DBHandler.Vulns()
+    vulnData = db.get_all()
+    for vuln in vulnData:
+        addVuln(vulns, vuln.doc_id, vuln["category"], vuln["name"])
+
+    vulnsClass = collections.OrderedDict()
+    vulnsClass["vulns"] = {"class":Vulns,
                        "arg":vulns}
 
-tabLst = collections.OrderedDict()
-tabLst["Mission"] = missionLst
-tabLst["Auditors"] = auditors
-tabLst["Vulns"] = vulnsClass
+    tabLst = collections.OrderedDict()
+    tabLst["Mission"] = MISSION
+    tabLst["Auditors"] = auditors
+    tabLst["Vulns"] = vulnsClass
 
-def main(args) :
     app=QApplication(args)
     window = Window('Repator', tabLst)
 
