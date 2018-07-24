@@ -104,8 +104,6 @@ class Tab(QWidget):
         historyFieldName = fieldTab[0]+"History-"+fieldTab[1]
 
         if historyFieldName in self.fields:
-            print(string)
-            print(self.fields[historyFieldName].currentText())
             if self.fields[historyFieldName].currentText() != string:
                 self.fields[historyFieldName].setCurrentIndex(0)
 
@@ -184,7 +182,6 @@ class Tab(QWidget):
                 if "setCurrentText" in dir(field):
                     field.setCurrentText(value)
                 if "setDate" in dir(field):
-                    print(value)
                     field.setDate(QDate.fromString(value))
 
     def save(self):
@@ -256,9 +253,6 @@ class Tab(QWidget):
                                 col += 1
 
                             idDoc = int(ident[ident.find('-')+1:])
-                            print(row)
-                            print(idDoc)
-                            print(ident)
                             self.db.delete(idDoc)
 
                             self.delAuditor()
