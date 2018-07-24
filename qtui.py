@@ -224,7 +224,7 @@ class Tab(QWidget):
             self.lst[ident] = field
 
     def addAuditor(self):
-        db = DBHandler.Auditor()
+        db = DBHandler.Auditors()
         docId = db.insert_record()
         lst = collections.OrderedDict()
         addAuditor(lst, docId)
