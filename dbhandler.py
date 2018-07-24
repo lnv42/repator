@@ -24,7 +24,7 @@ class DBHandler:
         self.db = TinyDB(db_path)
 
         if newDb:
-            self.db.insert_record(defaultValues)
+            self.insert_record(defaultValues)
         else:
             for name, value in defaultValues.items():
                 self.insert_column(name, value)
@@ -40,7 +40,7 @@ class DBHandler:
         self.db.update(cols, doc_ids=ids)
         return True
 
-    def insert_record(self, d):
+    def insert_record(self, d=None):
         if d == None:
             d = dict(self.search_by_id(1))
             for k in d:
@@ -59,6 +59,8 @@ class DBHandler:
 
     def update(self, id_, name, value):
         record = self.search_by_id(id_)
+        if record is None:
+            return False
         record[name] = value
         return self.db.update(record, doc_ids=[id_])
 
