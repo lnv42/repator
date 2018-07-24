@@ -1,5 +1,5 @@
 from tinydb import TinyDB, Query
-from os import path
+from os import path,mkdir
 
 from conf.db import *
 
@@ -15,6 +15,9 @@ class DBHandler:
         return DBHandler(DB_VULNS, DB_VULNS_DEFAULT)
 
     def __init__(self, db_path, defaultValues={}):
+        if not path.exists(path.dirname(db_path)):
+            mkdir(path.dirname(db_path), 0750)
+
         newDb = not path.isfile(db_path)
 
         self.path = db_path
