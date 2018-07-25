@@ -10,6 +10,7 @@ import collections
 from conf.ui import *
 from dbhandler import *
 from cvss import *
+from reportgenerator import *
 
 class Window(QWidget):
     def __init__(self, title, tabLst):
@@ -30,13 +31,16 @@ class Window(QWidget):
 
         saveBtn = QPushButton("Save", self)
         saveBtn.clicked.connect(self.save)
+        generateBtn = QPushButton("Generate", self)
+        generateBtn.clicked.connect(self.generate)
 
         self.grid = QGridLayout()
         self.grid.setSpacing(5)
         self.grid.setContentsMargins(5,5,5,5)
 
-        self.grid.addWidget(tabw)
-        self.grid.addWidget(saveBtn)
+        self.grid.addWidget(tabw, 0, 0, 1, 2)
+        self.grid.addWidget(saveBtn, 1, 0)
+        self.grid.addWidget(generateBtn, 1, 1)
 
         self.setLayout(self.grid)
 
@@ -53,6 +57,16 @@ class Window(QWidget):
             values[tabname] = tab.save()
 
         print(json.dumps(values))
+
+    def generate(self):
+        values = {}
+        for tabname, tab in self.tabs.items():
+            values[tabname] = tab.save()
+
+        p = Generator.generate_json(values)
+        doc = Document(docx="templates/template.docx")
+        Generator.generate_docx(doc, p)
+        doc.save("test.docx")
 
 
 class Tab(QWidget):
