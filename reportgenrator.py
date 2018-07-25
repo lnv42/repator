@@ -36,9 +36,10 @@ class Generator:
         return Generator.__escape_str(final_content)
 
     def __sub_dict(d, text):
-        for k in d:
-            if type(d[k]) is str:
-                text = re.sub("##"+k+"##", d[k], text)
+        for name, value in d.items():
+            if type(value) is str:
+                text = re.sub("##"+name+"##", value, text)
+
         return text
 
     def __do_fill(d, content):
@@ -49,7 +50,7 @@ class Generator:
             return d
         if d["type"] == "unordered_list" or d["type"] == "ordered_list":
             l = []
-            for e in content[d["filer"]]:
+            for e in content[d["filer"]].values():
                 template = dict(d["content"][0])
                 template["content"] = Generator.__do_fill(template["content"],e)
                 l.append(template)
