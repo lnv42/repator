@@ -108,7 +108,6 @@ class Tab(QWidget):
                 self.fields[historyFieldName].setCurrentIndex(0)
 
         self.db.update(int(fieldTab[1]), fieldTab[0], string)
-        self.values[fieldName] = string
 
         self.updateCvss(fieldTab[1])
 
@@ -157,6 +156,31 @@ class Tab(QWidget):
             self.values["expLvl-"+str(docId)] = eLvl
             self.fields["expLvl-"+str(docId)].setText(eLvl)
 
+    def enableRow(self, arg=None):
+        sender = self.sender()
+        docId = sender.accessibleName().split('-')[1]
+
+        enable = False
+        if "isSelected" in dir(sender):
+            if sender.isSelected():
+                enable = True
+
+        if "isChecked" in dir(sender):
+            if sender.isChecked():
+                enable = True
+
+        if "currentIndex" in dir(sender):
+            if sender.currentIndex() >= 2:
+                enable = True
+
+        if enable:
+            self.values[docId] = self.db.search_by_id(int(docId))
+            if "currentText" in dir(sender):
+                self.values[docId]["status"] = sender.currentText()
+        else:
+            if docId in self.values:
+                del self.values[docId]
+
     def updateAuditor(self, string=None):
         sender = self.sender()
         fieldName = sender.accessibleName()
@@ -171,7 +195,6 @@ class Tab(QWidget):
             string = string.toHtml()
 
         self.db.update(int(fieldTab[1]), fieldTab[0], string)
-        self.values[fieldName] = string
 
     def load(self, values):
         for name, value in values.items():
@@ -247,13 +270,14 @@ class Tab(QWidget):
                                 self.grid.removeWidget(self.fields[name])
                                 self.fields[name].deleteLater()
 
-                                del self.values[name]
                                 del self.fields[name]
                                 del self.lst[name]
                                 col += 1
 
-                            idDoc = int(ident[ident.find('-')+1:])
-                            self.db.delete(idDoc)
+                            idDoc = ident[ident.find('-')+1:]
+                            self.db.delete(int(idDoc))
+
+                            del self.values[idDoc]
 
                             self.delAuditor()
 

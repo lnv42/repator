@@ -35,9 +35,9 @@ def addVuln(lst, doc_id, vuln):
                                 "arg":vuln["name"],
                                 "col":2}
     lst["isVuln-"+str(doc_id)] = {"class":QComboBox,
-                                  #"signal":"currentTextChanged",
-                                  #"signalFct":"updateVuln",
-                                  "items":("NA", "Vulnerable", "Not Vulnerable", "TODO"),
+                                  "signal":"currentTextChanged",
+                                  "signalFct":"enableRow",
+                                  "items":("NA", "TODO", "Not Vulnerable", "Vulnerable"),
                                   "col":3}
     lst["edit-"+str(doc_id)] = {"class":QPushButton,
                                 "clicked":"editVuln",

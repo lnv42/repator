@@ -30,6 +30,7 @@ PEOPLES["rolesLabel"] = {"class":QLabel,
 def addPeople(lst, doc_id, people):
     lst["check-"+str(doc_id)] = {"class":QCheckBox,
                                  "signal":"stateChanged",
+                                 "signalFct":"enableRow",
                                  "col":0}
     lst["full_name-"+str(doc_id)] = {"class":QLineEdit,
                                      "signal":"textChanged",
