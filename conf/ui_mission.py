@@ -6,17 +6,17 @@ MISSION = collections.OrderedDict()
 MISSION["client"] = {"label":"Client",
                         "class":QLineEdit,
                         "signal":"textChanged"}
-MISSION["target"] = {"label":"Cible",
+MISSION["target"] = {"label":"Target",
                         "class":QLineEdit,
                         "signal":"textChanged"}
 MISSION["code"] = {"label":"Code",
                       "class":QLineEdit,
                       "signal":"textChanged"}
-MISSION["dateStart"] = {"label":"Date de début",
+MISSION["dateStart"] = {"label":"Start date",
                            "class":QDateEdit,
                            "signal":"dateChanged",
                            "arg":QDate.currentDate()}
-MISSION["dateEnd"] = {"label":"Date de fin",
+MISSION["dateEnd"] = {"label":"End date",
                          "class":QDateEdit,
                          "signal":"dateChanged",
                          "arg":QDate.currentDate()}
