@@ -137,28 +137,28 @@ class Generator:
             else:
                 Generator.generate_docx(document, json["content"])
 
+### testing
+# d = {"general": {"date_start": "11/11/11",
+#                  "date_end": "12/12/12"},
 
-d = {"general": {"date_start": "11/11/11",
-                 "date_end": "12/12/12"},
+#      "clients": [{"name": "john doe",
+#                   "email": "john@doe.com",
+#                   "tel": "+33 66 55 44 33",
+#                   "role": "CEO"}],
 
-     "clients": [{"name": "john doe",
-                  "email": "john@doe.com",
-                  "tel": "+33 66 55 44 33",
-                  "role": "CEO"}],
+#      "auditors": [{"name": "haxor auditor",
+#                    "email": "haxor@auditor.com",
+#                    "tel": "31337",
+#                    "role": "pro-hacker"},
 
-     "auditors": [{"name": "haxor auditor",
-                   "email": "haxor@auditor.com",
-                   "tel": "31337",
-                   "role": "pro-hacker"},
+#                   {"name": "script kiddie",
+#                    "email": "skiddie@mail.com",
+#                    "tel": "123456",
+#                    "role": "skiddie"}]}
 
-                  {"name": "script kiddie",
-                   "email": "skiddie@mail.com",
-                   "tel": "123456",
-                   "role": "skiddie"}]}
-
-p = (Generator.generate_json(d))
-#print(p)
-#print(Generator.generate_report(p))
-doc = Document(docx="templates/template.docx")
-Generator.generate_docx(doc, p)
-doc.save("test.docx")
+# p = (Generator.generate_json(d))
+# #print(p)
+# #print(Generator.generate_report(p))
+# doc = Document(docx="templates/template.docx")
+# Generator.generate_docx(doc, p)
+# doc.save("test.docx")
