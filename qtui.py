@@ -155,19 +155,24 @@ class Tab(QWidget):
 
     def updateCvss(self, docId):
         if "CVSS-"+str(docId) in self.fields:
-            cvss, imp, exp, rLvl, iLvl, eLvl = cvssFromValues(self.values, docId)
-            self.values["CVSS-"+str(docId)] = cvss
+            av = self.fields["AV-"+str(docId)].currentText()
+            ac = self.fields["AC-"+str(docId)].currentText()
+            pr = self.fields["PR-"+str(docId)].currentText()
+            ui = self.fields["UI-"+str(docId)].currentText()
+            s = self.fields["S-"+str(docId)].currentText()
+            c = self.fields["C-"+str(docId)].currentText()
+            i = self.fields["I-"+str(docId)].currentText()
+            a = self.fields["A-"+str(docId)].currentText()
+
+            cvss, imp, exp = cvssv3(av, ac, pr, ui, s, c, i, a)
+            rLvl, iLvl, eLvl = riskLevel(av, ac, pr, ui, s, c, i, a)
+
             self.fields["CVSS-"+str(docId)].setText(str(cvss))
-            self.values["CVSSimp-"+str(docId)] = imp
             self.fields["CVSSimp-"+str(docId)].setText(str(imp))
-            self.values["CVSSexp-"+str(docId)] = exp
             self.fields["CVSSexp-"+str(docId)].setText(str(exp))
 
-            self.values["riskLvl-"+str(docId)] = rLvl
             self.fields["riskLvl-"+str(docId)].setText(rLvl)
-            self.values["impLvl-"+str(docId)] = iLvl
             self.fields["impLvl-"+str(docId)].setText(iLvl)
-            self.values["expLvl-"+str(docId)] = eLvl
             self.fields["expLvl-"+str(docId)].setText(eLvl)
 
     def enableRow(self, arg=None):

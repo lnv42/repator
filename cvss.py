@@ -1,16 +1,3 @@
-def cvssFromValues(v, doc_id):
-    av = v["AV-"+str(doc_id)]
-    ac = v["AC-"+str(doc_id)]
-    pr = v["PR-"+str(doc_id)]
-    ui = v["UI-"+str(doc_id)]
-    s = v["S-"+str(doc_id)]
-    c = v["C-"+str(doc_id)]
-    i = v["I-"+str(doc_id)]
-    a = v["A-"+str(doc_id)]
-    cvss, imp, exp = cvssv3(av, ac, pr, ui, s, c, i, a)
-    rLvl, iLvl, eLvl = riskLevel(av, ac, pr, ui, s, c, i, a)
-    return cvss, imp, exp, rLvl, iLvl, eLvl
-
 def cvssv3(av, ac, pr, ui, s, c, i, a):
     AV = {"Network": 0.85, "Adjacent Network": 0.62, "Local": 0.55, "Physical": 0.2}
     AC = {"Low": 0.77, "High": 0.44}
