@@ -4,6 +4,8 @@ from collections import OrderedDict
 from docx import Document
 from docx.shared import Cm
 
+from cvss import *
+
 class Generator:
     def __escape_str(s):
         return s.replace("\a", "\\a").replace("\b", "\\b").replace("\f", "\\f").replace("\r", "\\r").replace("\t", "\\t").replace("\v", "\\v")
@@ -51,11 +53,25 @@ class Generator:
         if d["type"] == "unordered_list" or d["type"] == "ordered_list":
             l = []
             for e in content[d["filer"]].values():
-                template = dict(d["content"][0])
-                template["content"] = Generator.__do_fill(template["content"],e)
-                l.append(template)
+                for content in d["content"]:
+                    template = dict(content)
+                    template["content"] = Generator.__do_fill(template["content"],e)
+                    l.append(template)
             d["content"] = l
             return d
+        if d["type"].startswith("Vulns-"):
+            l = []
+            match = d["type"].split("-")[1]
+            for vuln in content["Vulns"].values():
+                riskLvl = vulnRiskLevel(vuln)[0]
+                if (riskLvl == match and vuln["status"] == "Vulnerable") or vuln["status"] == match:
+                    for content in d["content"]:
+                        template = dict(content)
+                        template["content"] = Generator.__do_fill(template["content"],vuln)
+                        l.append(template)
+            d["content"] = l
+            return d
+
         if "filer" in d:
             content = content[d["filer"]]
         if type(d["content"]) is list:
