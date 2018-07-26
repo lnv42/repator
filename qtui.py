@@ -242,6 +242,9 @@ class Tab(QWidget):
                 cpt += 1
             self.values["list"] = outLst
 
+        if "vulns" in self.fields:
+            self.values = self.fields["vulns"].save()
+
         return self.values
 
     def editVuln(self):
@@ -436,6 +439,8 @@ class Vulns(QWidget):
 
     def changeValue(self,string):
         return Tab.changeValue(self, string)
+    def save(self):
+        return self.tabs["All"].save()
 
     #def addItem(self):
     #    return Tab.addItem(self)
