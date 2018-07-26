@@ -388,19 +388,6 @@ class Vulns(QWidget):
         lst = args[0]
         db = args[1]
 
-        #self.lst = lst
-        #self.values = parent.values
-        #self.fields = parent.fields
-
-        #self.grid = QGridLayout()
-        #self.grid.setSpacing(5)
-        #self.grid.setContentsMargins(5,5,5,5)
-        #self.grid.setAlignment(Qt.AlignTop)
-
-        #Tab.parseLst(self)
-
-        #self.setLayout(self.grid)
-
         self.tabw = QTabWidget()
         self.tabw.setTabsClosable(True)
         self.tabw.tabCloseRequested.connect(self.closeTab)
@@ -412,15 +399,11 @@ class Vulns(QWidget):
         for label, lst in tabLst.items():
             self.addTab(label, lst, db)
 
-        #saveBtn = QPushButton("Save", self)
-        #saveBtn.clicked.connect(self.save)
-
         self.grid = QGridLayout()
         self.grid.setSpacing(5)
         self.grid.setContentsMargins(5,5,5,5)
 
         self.grid.addWidget(self.tabw)
-        #self.grid.addWidget(saveBtn)
 
         self.setLayout(self.grid)
 
@@ -437,16 +420,8 @@ class Vulns(QWidget):
         del self.tabs[self.tabw.tabText(index)]
         self.tabw.removeTab(index)
 
-    def changeValue(self,string):
-        return Tab.changeValue(self, string)
     def save(self):
         return self.tabs["All"].save()
-
-    #def addItem(self):
-    #    return Tab.addItem(self)
-
-    #def delItem(self):
-    #    return Tab.delItem(self)
 
 def main(args) :
     auditors = copy(PEOPLES)
@@ -458,7 +433,6 @@ def main(args) :
     clients = copy(PEOPLES)
     dbc = DBHandler.Clients()
     clientData = dbc.get_all()
-    print(clientData)
     for client in clientData:
         addPeople(clients, client.doc_id, client)
 
