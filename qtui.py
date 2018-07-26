@@ -244,7 +244,7 @@ class Tab(QWidget):
         docId = sender.accessibleName().split("-")[1]
         vuln = self.db.search_by_id(int(docId))
         lst = vulnEditing(docId, vuln)
-        self._parent.addTab(str(docId), lst)
+        self._parent.addTab(str(docId), lst, self.db)
         self._parent.tabs[str(docId)].updateCvss(docId)
 
     def addVuln(self):
