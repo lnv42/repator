@@ -1,3 +1,6 @@
+def vulnCvssv3(v):
+    return cvssv3(v["AV"], v["AC"], v["PR"], v["UI"], v["S"], v["C"], v["I"], v["A"])
+
 def cvssv3(av, ac, pr, ui, s, c, i, a):
     AV = {"Network": 0.85, "Adjacent Network": 0.62, "Local": 0.55, "Physical": 0.2}
     AC = {"Low": 0.77, "High": 0.44}
@@ -27,6 +30,9 @@ def cvssv3(av, ac, pr, ui, s, c, i, a):
     if score > 10:
         score = 10.0
     return round(score,1), round(imp,1), round(exp,1)
+
+def vulnRiskLevel(v):
+    return riskLevel(v["AV"], v["AC"], v["PR"], v["UI"], v["S"], v["C"], v["I"], v["A"])
 
 def riskLevel(av, ac, pr, ui, s, c, i, a):
     CIA = {"None": 0, "Low": 1, "High": 2}
