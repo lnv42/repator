@@ -11,16 +11,31 @@ def vulnEditing(doc_id, vuln):
                                     "signal":"textChanged",
                                     "signalFct":"updateVuln",
                                     "arg":vuln["category"]}
+    lst["sub_category-"+str(doc_id)] = {"class":QLineEdit,
+                                        "label":"Sub Category",
+                                        "signal":"textChanged",
+                                        "signalFct":"updateVuln",
+                                        "arg":vuln["sub_category"]}
     lst["name-"+str(doc_id)] = {"class":QLineEdit,
                                 "label":"Vulnerability",
                                 "signal":"textChanged",
                                 "signalFct":"updateVuln",
                                 "arg":vuln["name"]}
-    lst["isVuln-"+str(doc_id)] = {"class":QComboBox,
-                                  "label":"Status",
-                                  #"signal":"currentTextChanged",
-                                  #"signalFct":"updateVuln",
-                                  "items":("NA", "Vulnerable", "Not Vulnerable", "TODO")}
+    lst["labelNeg-"+str(doc_id)] = {"class":QLineEdit,
+                                    "label":"Negative Label",
+                                    "signal":"textChanged",
+                                    "signalFct":"updateVuln",
+                                    "arg":vuln["labelNeg"]}
+    lst["labelPos-"+str(doc_id)] = {"class":QLineEdit,
+                                    "label":"Positive Label",
+                                    "signal":"textChanged",
+                                    "signalFct":"updateVuln",
+                                    "arg":vuln["labelPos"]}
+    # lst["isVuln-"+str(doc_id)] = {"class":QComboBox,
+    #                               "label":"Status",
+    #                               #"signal":"currentTextChanged",
+    #                               #"signalFct":"updateVuln",
+    #                               "items":("NA", "Vulnerable", "Not Vulnerable", "TODO")}
     lst["observHistory-"+str(doc_id)] = {"class":QComboBox,
                                          "label":"Observation History",
                                          "signal":"currentTextChanged",
@@ -41,6 +56,16 @@ def vulnEditing(doc_id, vuln):
                                 "signal":"textChanged",
                                 "signalFct":"updateVuln",
                                 "arg":vuln["risk"].replace("\n", "<br/>")}
+    lst["recoHistory-"+str(doc_id)] = {"class":QComboBox,
+                                       "label":"Recommandation History",
+                                       "signal":"currentTextChanged",
+                                       "signalFct":"loadHistory",
+                                       "items":vuln["recoHistory"]}
+    lst["reco-"+str(doc_id)] = {"class":QTextEdit,
+                                "label":"Recommandation",
+                                "signal":"textChanged",
+                                "signalFct":"updateVuln",
+                                "arg":vuln["reco"].replace("\n", "<br/>")}
     lst["CVSS"] = {"class":QLabel,
                      "col":0}
     lst["AV0"] = {"class":QLabel,
