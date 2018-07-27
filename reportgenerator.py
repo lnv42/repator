@@ -48,8 +48,10 @@ class Generator:
         if type(d) is str:
             d = Generator.__sub_dict(content, d)
             return d
-        if "content" not in d:
+
+        if "content" not in d and "type" not in d:
             return d
+
         if d["type"] == "unordered_list" or d["type"] == "ordered_list":
             l = []
             for e in content[d["filer"]].values():
@@ -59,6 +61,7 @@ class Generator:
                     l.append(template)
             d["content"] = l
             return d
+
         if d["type"].startswith("Vulns-"):
             l = []
             match = d["type"].split("-")[1]
@@ -72,8 +75,37 @@ class Generator:
             d["content"] = l
             return d
 
+        if d["type"] == "VulnsFull":
+            l = []
+            cat = None
+            sub_cat = None
+            for vuln in content["Vulns"].values():
+                if vuln["category"] != cat:
+                    cat = vuln["category"]
+                    sub_cat = None
+                    template = dict(d["catContent"])
+                    template["content"] = Generator.__do_fill(template["content"],vuln)
+                    l.append(template)
+
+                if vuln["sub_category"] != sub_cat:
+                    sub_cat = vuln["sub_category"]
+                    template = dict(d["subcatContent"])
+                    template["content"] = Generator.__do_fill(template["content"],vuln)
+                    l.append(template)
+
+                for content in d["content-"+vuln["status"]]:
+                    template = dict(content)
+                    template["content"] = Generator.__do_fill(template["content"],vuln)
+                    l.append(template)
+            d["content"] = l
+            return d
+
+        if "content" not in d:
+            return d
+
         if "filer" in d:
             content = content[d["filer"]]
+
         if type(d["content"]) is list:
             l = []
             for e in d["content"]:
@@ -83,6 +115,7 @@ class Generator:
             d["content"] = Generator.__sub_dict(content, d["content"])
         else:
                 d["content"] = Generator.__do_fill(d["content"], content)
+
         return d
 
 

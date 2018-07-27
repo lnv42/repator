@@ -79,7 +79,7 @@ class Tab(QWidget):
     def initTab(self, lst):
         self.row = 0
         self.lst = lst
-        self.values = {}
+        self.values = collections.OrderedDict()
         self.fields = {}
 
         self.grid = QGridLayout(self)
