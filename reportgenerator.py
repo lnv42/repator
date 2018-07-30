@@ -49,6 +49,12 @@ class Generator:
             d = Generator.__sub_dict(content, d)
             return d
 
+        if type(d) is list:
+            l = []
+            for e in d:
+                l.append(Generator.__do_fill(e, content))
+            return l
+
         if "content" not in d and "type" not in d:
             return d
 
