@@ -41,6 +41,14 @@ class Generator:
         for name, value in d.items():
             if type(value) is str:
                 text = re.sub("##"+name+"##", value, text)
+                m = re.search("##"+name+r"#(\d+)##", text, re.MULTILINE)
+                if m is not None:
+                    text = re.sub("##"+name+"#"+m.group(1)+"##", value[int(m.group(1))], text)
+                m = re.search("##"+name+r"#(\d+):(\d+)##", text, re.MULTILINE)
+                if m is not None:
+                    text = re.sub("##"+name+"#"+m.group(1)+":"+m.group(2)+"##", value[int(m.group(1)):int(m.group(2))], text)
+            else:
+                text = re.sub("##"+name+"##", str(value), text)
 
         return text
 
