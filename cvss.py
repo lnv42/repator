@@ -2,21 +2,21 @@ def vulnCvssv3(v):
     return cvssv3(v["AV"], v["AC"], v["PR"], v["UI"], v["S"], v["C"], v["I"], v["A"])
 
 def cvssv3(av, ac, pr, ui, s, c, i, a):
-    AV = {"Network": 0.85, "Adjacent Network": 0.62, "Local": 0.55, "Physical": 0.2}
-    AC = {"Low": 0.77, "High": 0.44}
-    if s == "Changed":
-        PR = {"None": 0.85, "Low": 0.68, "High": 0.5}
+    AV = {"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}
+    AC = {"L": 0.77, "H": 0.44}
+    if s == "C":
+        PR = {"N": 0.85, "L": 0.68, "H": 0.5}
     else:
-        PR = {"None": 0.85, "Low": 0.62, "High": 0.27}
-    UI = {"None": 0.85, "Required": 0.62}
-    CIA = {"None": 0, "Low": 0.22, "High": 0.56}
-    av = AV[av]
-    ac = AC[ac]
-    pr = PR[pr]
-    ui = UI[ui]
-    c = CIA[c]
-    i = CIA[i]
-    a = CIA[a]
+        PR = {"N": 0.85, "L": 0.62, "H": 0.27}
+    UI = {"N": 0.85, "R": 0.62}
+    CIA = {"N": 0, "L": 0.22, "H": 0.56}
+    av = AV[av[0]]
+    ac = AC[ac[0]]
+    pr = PR[pr[0]]
+    ui = UI[ui[0]]
+    c = CIA[c[0]]
+    i = CIA[i[0]]
+    a = CIA[a[0]]
     exp = 8.22 * av * ac * pr * ui
     imp = 1-((1-c)*(1-i)*(1-a))
     if s == "Changed":
@@ -35,12 +35,12 @@ def vulnRiskLevel(v):
     return riskLevel(v["AV"], v["AC"], v["PR"], v["UI"], v["S"], v["C"], v["I"], v["A"])
 
 def riskLevel(av, ac, pr, ui, s, c, i, a):
-    CIA = {"None": 0, "Low": 1, "High": 2}
-    S = {"Unchanged": False, "Changed": True}
-    c = CIA[c]
-    i = CIA[i]
-    a = CIA[a]
-    s = S[s]
+    CIA = {"N": 0, "L": 1, "H": 2}
+    S = {"U": False, "C": True}
+    c = CIA[c[0]]
+    i = CIA[i[0]]
+    a = CIA[a[0]]
+    s = S[s[0]]
 
     if c == 2 or i == 2 or (c*2+i*2+a >= 5 and s):
         iLvl = 4
@@ -51,14 +51,14 @@ def riskLevel(av, ac, pr, ui, s, c, i, a):
     else:
         iLvl = 1
 
-    AV = {"Network": 1, "Adjacent Network": 2, "Local": 3, "Physical": 4}
-    AC = {"Low": 1, "High": 2}
-    PR = {"None": 0, "Low": 1, "High": 2}
-    UI = {"None": False, "Required": True}
-    av = AV[av]
-    ac = AC[ac]
-    pr = PR[pr]
-    ui = UI[ui]
+    AV = {"N": 1, "A": 2, "L": 3, "P": 4}
+    AC = {"L": 1, "H": 2}
+    PR = {"N": 0, "L": 1, "H": 2}
+    UI = {"N": False, "R": True}
+    av = AV[av[0]]
+    ac = AC[ac[0]]
+    pr = PR[pr[0]]
+    ui = UI[ui[0]]
 
     if av == 4 or pr == 2 or (av == 3 and pr == 1 and ui) or (ac == 2 and (av == 3 or pr == 1 or ui)):
         eLvl = 1
