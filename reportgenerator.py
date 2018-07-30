@@ -72,8 +72,11 @@ class Generator:
             l = []
             match = d["type"].split("-")[1]
             for vuln in content["Vulns"].values():
-                riskLvl = vulnRiskLevel(vuln)[0]
-                if (riskLvl == match and vuln["status"] == "Vulnerable") or vuln["status"] == match:
+                if "riskLvl" not in vuln:
+                    vuln["riskLvl"], vuln["impLvl"], vuln["expLvl"] = vulnRiskLevel(vuln)
+                    vuln["cvss"], vuln["cvssImp"], vuln["cvssExp"] = vulnCvssv3(vuln);
+
+                if (vuln["riskLvl"] == match and vuln["status"] == "Vulnerable") or vuln["status"] == match:
                     for content in d["content"]:
                         template = dict(content)
                         template["content"] = Generator.__do_fill(template["content"],vuln)
