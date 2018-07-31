@@ -4,7 +4,7 @@ from collections import OrderedDict
 from docx import Document
 from docx.shared import Cm
 
-from cvss import *
+from src.cvss import *
 
 class Generator:
     def __escape_str(s):
