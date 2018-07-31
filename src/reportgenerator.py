@@ -4,6 +4,7 @@ from collections import OrderedDict
 from docx import Document
 from docx.shared import Cm
 
+from conf.report import *
 from src.cvss import *
 
 class Generator:
@@ -138,7 +139,7 @@ class Generator:
 
     def generate_json(json_content):
         structure = None
-        with open("content/structure.json", "r") as f:
+        with open(REPORT_TEMPLATE_MAIN, "r") as f:
             structure = f.read()
             structure = json.loads(structure)
 
@@ -146,7 +147,7 @@ class Generator:
         result_json["type"] = "report"
         result_json["content"] = []
         for e in structure:
-            with open("content/" + e + ".json", "r") as f:
+            with open(REPORT_TEMPLATE_DIR + e + ".json", "r") as f:
                 file_content = f.read()
             json_file_content = json.loads(file_content)
             res = Generator.__do_fill(json_file_content, json_content)

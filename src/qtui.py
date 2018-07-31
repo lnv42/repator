@@ -5,6 +5,7 @@ from PyQt5.QtCore import QDate, Qt
 import json
 import collections
 
+from conf.report import *
 from conf.ui import *
 from src.cvss import *
 from src.reportgenerator import *
@@ -61,9 +62,9 @@ class Window(QWidget):
             values[tabname] = tab.save()
 
         p = Generator.generate_json(values)
-        doc = Document(docx="templates/template.docx")
+        doc = Document(docx=REPORT_TEMPLATE_BASE)
         Generator.generate_docx(doc, p)
-        doc.save("test.docx")
+        doc.save(REPORT_OUTPUT)
 
 
 class Tab(QWidget):
