@@ -1,0 +1,1 @@
+{"_default": {"1": {"email": "dummy.name@email.com", "phone": "+33 1 23 45 67 89", "full_name": "Dummy name", "role": "CISO"}, "2": {"full_name": "John Doe", "phone": "+33 1 11 11 11 11", "email": "john.doe@client.com", "role": "CISO"}, "3": {"phone": "+33 2 22 22 22 22", "role": "CTO", "full_name": "Jack Palmer", "email": "jack.palmer@client2.com"}}}
