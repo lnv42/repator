@@ -1,0 +1,75 @@
+{
+	"name": "Result Overview",
+	"type": "Heading 1",
+    "content": [
+        {
+            "type": "Normal",
+            "content": "blabla"
+        },
+        {
+            "type": "Heading 2",
+            "name": "Very High risks",
+            "content": {
+                "type": "Vulns-Very High",
+                "content": [
+                    {
+                        "type": "List Paragraph",
+                        "content": "##name##"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Heading 2",
+            "name": "High risks",
+            "content": {
+                "type": "Vulns-High",
+                "content": [
+                    {
+                        "type": "List Paragraph",
+                        "content": "##name##"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Heading 2",
+            "name": "Medium risks",
+            "content": {
+                "type": "Vulns-Medium",
+                "content": [
+                    {
+                        "type": "List Paragraph",
+                        "content": "##name##"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Heading 2",
+            "name": "Low risks",
+            "content": {
+                "type": "Vulns-Low",
+                "content": [
+                    {
+                        "type": "List Paragraph",
+                        "content": "##name##"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Heading 2",
+            "name": "Covered risks",
+            "content": {
+                "type": "Vulns-Not Vulnerable",
+                "content": [
+                    {
+                        "type": "List Paragraph",
+                        "content": "##name##"
+                    }
+                ]
+            }
+        }
+    ]
+}

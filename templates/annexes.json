@@ -1,0 +1,26 @@
+{
+    "name": "Annexe : bla",
+	"type": "Heading 1",
+    "content": [
+        {
+			"type": "Normal",
+			"content": "This annexe test the table feature"
+		},
+        {
+            "type": "table",
+            "col":2,
+            "row":3,
+            "width": [2.4, 14.6],
+            "style": "Table Grid",
+            "content": [
+                ["haha", "blalalalalalala"],
+                ["hihi", "blalalalalalalablalalalalalal"],
+                ["hoho", "fesfefesfesfesfesofesmko"]
+            ]
+        },
+        {
+			"type": "Normal",
+			"content": "This is the End !"
+		}
+    ]
+}

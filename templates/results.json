@@ -1,0 +1,102 @@
+{
+	"name": "Results",
+	"type": "Heading 1",
+	"content": [
+		{
+			"type": "Normal",
+			"content": "blablabla."
+		},
+		{
+			"type": "VulnsFull",
+            "catContent": {
+                "type": "Heading 2",
+                "content": "##category##"
+            },
+            "subcatContent": {
+                "type": "Heading 3",
+                "content": "##sub_category##"
+            },
+            "content-Vulnerable": [
+                {
+                    "type": "Heading 4",
+                    "content": "##name##"
+                },
+                {
+                    "type": "Normal",
+                    "content": "##labelNeg##"
+                },
+                {
+                    "type": "table",
+                    "col": 4,
+                    "row": 2,
+                    "style": "Table Grid",
+                    "content": [
+                        ["Impact", "Exploitability", "Risk", "CVSSv3 Score"],
+                        ["##impLvl##", "##expLvl##", "##riskLvl##", "##cvss##"]
+                    ]
+                },
+                {
+                    "type": "table",
+                    "col": 8,
+                    "row": 2,
+                    "style": "Table Grid",
+                    "content": [
+                        ["AV", "AC", "PR", "UI", "S", "C", "I", "A"],
+                        ["##AV#0##", "##AC#0##", "##PR#0##", "##UI#0##", "##S#0##", "##C#0##", "##I#0##", "##A#0##"]
+                    ]
+                },
+                {
+                    "type": "Heading 5",
+                    "content": "Observation"
+                },
+                {
+                    "type": "Normal",
+                    "content": "##observ##"
+                },
+                {
+                    "type": "Heading 5",
+                    "content": "Risk"
+                },
+                {
+                    "type": "Normal",
+                    "content": "##risk##"
+                }
+                ,
+                {
+                    "type": "Heading 5",
+                    "content": "Recommandation"
+                },
+                {
+                    "type": "Normal",
+                    "content": "##reco##"
+                }
+            ],
+            "content-Not Vulnerable": [
+                {
+                    "type": "Heading 4",
+                    "content": "##name##"
+                },
+                {
+                    "type": "Normal",
+                    "content": "##labelPos##"
+                },
+                {
+                    "type": "Heading 5",
+                    "content": "Observation"
+                },
+                {
+                    "type": "Normal",
+                    "content": "##observ##"
+                },
+                {
+                    "type": "Heading 5",
+                    "content": "Covered risk"
+                },
+                {
+                    "type": "Normal",
+                    "content": "##risk##"
+                }
+            ]
+		}
+	]
+}
