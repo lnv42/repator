@@ -1,5 +1,4 @@
-
-
-data/*
 __pycache__
-content/*
+output.docx
+db/*.json
+templates/*
