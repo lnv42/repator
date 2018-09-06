@@ -21,6 +21,7 @@ class DBHandler:
         newDb = not path.isfile(db_path)
 
         self.path = db_path
+        self.defaultValues = defaultValues
         self.db = TinyDB(db_path)
 
         if newDb:
@@ -66,6 +67,10 @@ class DBHandler:
 
     def delete(self, id_):
         return self.db.remove(doc_ids = [id_])
+
+    def purge(self):
+        self.db.purge()
+        self.insert_record(self.defaultValues)
 
 """    
 # Testing
