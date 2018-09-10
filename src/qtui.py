@@ -67,7 +67,7 @@ class Window(QWidget):
         doc.save(REPORT_OUTPUT)
 
 
-class Tab(QWidget):
+class Tab(QScrollArea):
     def __init__(self, parent, lst, db=None):
         super().__init__(parent)
         self.db = db
@@ -80,12 +80,17 @@ class Tab(QWidget):
         self.values = collections.OrderedDict()
         self.fields = {}
 
-        self.grid = QGridLayout(self)
+        self.grid = QGridLayout()
         self.grid.setSpacing(5)
         self.grid.setContentsMargins(5,5,5,5)
         self.grid.setAlignment(Qt.AlignTop)
 
         self.parseLst()
+
+        self.widget = QWidget()
+        self.widget.setLayout(self.grid)
+        self.setWidget(self.widget)
+        self.setWidgetResizable(True)
 
     def changeValue(self, string=None):
         sender = self.sender()
