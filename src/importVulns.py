@@ -4,8 +4,6 @@ from conf.db import *
 from src.dbhandler import *
 
 def main(args) :
-#    dbv = DBHandler.Vulns()
-#    vulnData = dbv.get_all()
     vulns = DB_VULNS_DEFAULT
     vulnKeys = []
     for key in vulns.keys():
@@ -37,4 +35,3 @@ def main(args) :
                 newVuln[key] = value
 
             dbv.insert_record(newVuln)
-            
