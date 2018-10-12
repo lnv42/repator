@@ -99,7 +99,7 @@ def vulnEditing(doc_id, vuln):
                               "signal":"currentTextChanged",
                               "signalFct":"updateVuln",
                               "setCurrentText":vuln["AV"],
-                              "items":("Network", "Adjacent Network", "Local", "Physical"),
+                              "items":("Network", "Adjacent", "Local", "Physical"),
                               "col":1}
     lst["AC-"+str(doc_id)] = {"class":QComboBox,
                               "signal":"currentTextChanged",
