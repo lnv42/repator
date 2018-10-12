@@ -80,7 +80,8 @@ class Generator:
         if d["type"].startswith("Vulns-"):
             l = []
             match = d["type"].split("-")[1]
-            for vuln in content["Vulns"].values():
+            for docId, vuln in content["Vulns"].items():
+                vuln["doc_id"] = docId
                 if "riskLvl" not in vuln:
                     vuln["riskLvl"], vuln["impLvl"], vuln["expLvl"] = vulnRiskLevel(vuln)
                     vuln["cvss"], vuln["cvssImp"], vuln["cvssExp"] = vulnCvssv3(vuln);
@@ -97,7 +98,8 @@ class Generator:
             l = []
             cat = None
             sub_cat = None
-            for vuln in content["Vulns"].values():
+            for docId, vuln in content["Vulns"].items():
+                vuln["doc_id"] = docId
                 if vuln["category"] != cat:
                     cat = vuln["category"]
                     sub_cat = None
