@@ -11,7 +11,7 @@ def main(args) :
             vulnKeys.append(key)
 
     with open(args[1], 'r', newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=';', skipinitialspace=True)
+        reader = csv.reader(csvfile)
 
         newVuln = DB_VULNS_DEFAULT
         dbv = DBHandler.Vulns()

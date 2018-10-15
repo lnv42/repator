@@ -1,3 +1,5 @@
+import csv
+import sys
 
 from conf.db import *
 from src.dbhandler import *
@@ -9,10 +11,10 @@ def main(args) :
     vulnKeys = []
     for key in vulns.keys():
         if type(vulns[key]) is str:
-            print(key, end="; ")
             vulnKeys.append(key)
-    print()
+
+    writer = csv.DictWriter(sys.stdout, vulnKeys, extrasaction='ignore')
+    writer.writeheader()
+
     for vuln in vulnData:
-        for key in vulnKeys:
-            print('"'+vuln[key]+'"', end="; ")
-        print()
+        writer.writerow(vuln)
