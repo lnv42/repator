@@ -29,6 +29,8 @@ class Window(QWidget):
 
         saveBtn = QPushButton("Save", self)
         saveBtn.clicked.connect(self.save)
+        loadBtn = QPushButton("Load", self)
+        loadBtn.clicked.connect(self.load)
         generateBtn = QPushButton("Generate", self)
         generateBtn.clicked.connect(self.generate)
 
@@ -36,25 +38,41 @@ class Window(QWidget):
         self.grid.setSpacing(5)
         self.grid.setContentsMargins(5,5,5,5)
 
-        self.grid.addWidget(tabw, 0, 0, 1, 2)
+        self.grid.addWidget(tabw, 0, 0, 1, 3)
         self.grid.addWidget(saveBtn, 1, 0)
-        self.grid.addWidget(generateBtn, 1, 1)
+        self.grid.addWidget(loadBtn, 1, 1)
+        self.grid.addWidget(generateBtn, 1, 2)
 
         self.setLayout(self.grid)
 
     def loadJson(self, jsonStr):
-        self.load(json.loads(jsonStr))
+        self.loadDict(json.loads(jsonStr))
 
-    def load(self, values):
+    def loadDict(self, values):
         for tabname, tabval in values.items():
             self.tabs[tabname].load(tabval)
+
+    def load(self):
+        projectFilename = QFileDialog.getOpenFileName(self, "Load Repator Project", "projects/", "Repator Project files [*.rep] (*.rep);;All files [*] (*)")[0]
+        if len(projectFilename) > 0:
+            try:
+                with open(projectFilename, 'r') as projectFile:
+                    self.loadJson(projectFile.read())
+            except:
+                print("LoadFileError")
 
     def save(self):
         values = {}
         for tabname, tab in self.tabs.items():
             values[tabname] = tab.save()
 
-        print(json.dumps(values))
+        projectFilename = QFileDialog.getSaveFileName(self, "Save Repator Project", "projects/test.rep", "Repator Project files [*.rep] (*.rep);;All files [*] (*)")[0]
+        if len(projectFilename) > 0:
+            try:
+                with open(projectFilename, 'w') as projectFile:
+                    projectFile.write(json.dumps(values))
+            except:
+                print("SaveFileError")
 
     def generate(self):
         values = {}
