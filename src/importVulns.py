@@ -11,7 +11,7 @@ def main(args) :
             vulnKeys.append(key)
 
     with open(args[1], 'r', newline='') as csvfile:
-        reader = csv.reader(csvfile)
+        reader = csv.reader(csvfile, skipinitialspace=True)
 
         newVuln = DB_VULNS_DEFAULT
         dbv = DBHandler.Vulns()
@@ -26,7 +26,9 @@ def main(args) :
                 first = False
                 if vulnKeys != row:
                     print("Keys present in the csv are not matching db's keys")
-                    print("Exepected keys :")
+                    print("Présent keys:")
+                    print(row)
+                    print("Exepected keys:")
                     print(vulnKeys)
                     break
                 continue
