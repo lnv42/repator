@@ -238,7 +238,17 @@ class Tab(QScrollArea):
 
     def load(self, values):
         for name, value in values.items():
-            if name in self.fields:
+            if name.isdigit():
+                docId = name
+                if "check-"+docId in self.fields:
+                    self.fields["check-"+docId].setCheckState(Qt.Checked)
+
+                if "status" in value and "vulns" in self.fields:
+                    print(self.fields["vulns"].tabs["All"].fields)
+                    if "isVuln-"+docId in self.fields["vulns"].tabs["All"].fields:
+                        self.fields["vulns"].tabs["All"].fields["isVuln-"+docId].setCurrentText(value["status"])
+
+            elif name in self.fields:
                 field = self.fields[name]
                 if "setText" in dir(field):
                     field.setText(value)
