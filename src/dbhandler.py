@@ -48,6 +48,9 @@ class DBHandler:
                 d[k] = ""
         return self.db.insert(d)
 
+    def insert_multiple(self, d):
+        return self.db.insert_multiple(d)
+
     def get_all(self):
         return self.db.all()[1:]
 
@@ -71,6 +74,9 @@ class DBHandler:
     def purge(self):
         self.db.purge()
         self.insert_record(self.defaultValues)
+
+    def close(self):
+        self.db.close()
 
 """    
 # Testing

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QDate, Qt
+from PyQt5.QtCore import QDate, QDateTime, Qt
 import json
 import collections
 
@@ -9,6 +9,7 @@ from conf.report import *
 from conf.ui import *
 from src.cvss import *
 from src.reportgenerator import *
+from src.dbhandler import *
 
 class Window(QWidget):
     def __init__(self, title, tabLst):
@@ -21,7 +22,9 @@ class Window(QWidget):
         self.tabs = {}
 
         for label, tab in tabLst.items():
-            if "db" in tab:
+            if "addFct" in  tab:
+                self.tabs[label] = Tab(tabw, tab["lst"], tab["db"], tab["addFct"])
+            elif "db" in tab:
                 self.tabs[label] = Tab(tabw, tab["lst"], tab["db"])
             else:
                 self.tabs[label] = Tab(tabw, tab)
@@ -86,17 +89,25 @@ class Window(QWidget):
 
 
 class Tab(QScrollArea):
-    def __init__(self, parent, lst, db=None):
+    def __init__(self, parent, lst, db=None, addFct=None):
         super().__init__(parent)
+        self.headLst = lst
         self.db = db
-        self.initTab(lst)
+        self.addFct = addFct
+        self.initTab()
         self._parent = parent
 
-    def initTab(self, lst):
+    def initTab(self):
         self.row = 0
-        self.lst = lst
+        self.lst = self.headLst
         self.values = collections.OrderedDict()
         self.fields = {}
+
+        if self.db is not None and self.addFct is not None:
+            items = self.db.get_all()
+            print(items)
+            for item in items:
+                self.addFct(self.lst, item.doc_id, item)
 
         self.grid = QGridLayout()
         self.grid.setSpacing(5)
@@ -237,16 +248,37 @@ class Tab(QScrollArea):
         self.db.update(int(fieldTab[1]), fieldTab[0], string)
 
     def load(self, values):
+        if "vulns" in self.fields:
+            self.fields["vulns"].load(values)
+            return
+
+        if self.db is not None and "db" in values:
+            creationDate = QDateTime.currentDateTime().toString("yyyyMMdd-hhmmss")
+            dbPath = self.db.path+"-tmp-"+creationDate+".json"
+            defaultValues = self.db.defaultValues
+            self.db.close()
+            self.db = DBHandler(dbPath, defaultValues)
+            self.db.insert_multiple(values["db"])
+
+            if self.addFct is not None:
+                self.row = 0
+                self.lst = self.headLst
+                self.values.clear()
+                self.fields.clear()
+
+                items = self.db.get_all()
+                for item in items:
+                    self.addFct(self.lst, item.doc_id, item)
+                self.parseLst()
+
         for name, value in values.items():
             if name.isdigit():
                 docId = name
                 if "check-"+docId in self.fields:
                     self.fields["check-"+docId].setCheckState(Qt.Checked)
 
-                if "status" in value and "vulns" in self.fields:
-                    print(self.fields["vulns"].tabs["All"].fields)
-                    if "isVuln-"+docId in self.fields["vulns"].tabs["All"].fields:
-                        self.fields["vulns"].tabs["All"].fields["isVuln-"+docId].setCurrentText(value["status"])
+                if "status" in value and "isVuln-"+docId in self.fields:
+                        self.fields["isVuln-"+docId].setCurrentText(value["status"])
 
             elif name in self.fields:
                 field = self.fields[name]
@@ -275,6 +307,9 @@ class Tab(QScrollArea):
 
         if "vulns" in self.fields:
             self.values = self.fields["vulns"].save()
+
+        if self.db is not None:
+            self.values["db"] = self.db.get_all()
 
         return self.values
 
@@ -418,6 +453,7 @@ class Vulns(QWidget):
 
         lst = args[0]
         db = args[1]
+        addFct = args[2]
 
         self.tabw = QTabWidget()
         self.tabw.setTabsClosable(True)
@@ -428,7 +464,7 @@ class Vulns(QWidget):
         tabLst["All"] = lst
 
         for label, lst in tabLst.items():
-            self.addTab(label, lst, db)
+            self.addTab(label, lst, db, addFct)
 
         self.grid = QGridLayout()
         self.grid.setSpacing(5)
@@ -438,11 +474,11 @@ class Vulns(QWidget):
 
         self.setLayout(self.grid)
 
-    def addTab(self, label, lst, db):
+    def addTab(self, label, lst, db, addFct=None):
         if label in self.tabs:
             self.tabw.setCurrentWidget(self.tabs[label])
         else:
-            self.tabs[label] = Tab(self, lst, db)
+            self.tabs[label] = Tab(self, lst, db, addFct)
             self.tabw.addTab(self.tabs[label], label)
             self.tabw.setCurrentWidget(self.tabs[label])
 
@@ -450,6 +486,9 @@ class Vulns(QWidget):
         self.tabs[self.tabw.tabText(index)].saveHistories()
         del self.tabs[self.tabw.tabText(index)]
         self.tabw.removeTab(index)
+
+    def load(self, values):
+        return self.tabs["All"].load(values)
 
     def save(self):
         return self.tabs["All"].save()

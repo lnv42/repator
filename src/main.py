@@ -7,29 +7,16 @@ from src.qtui import *
 from src.dbhandler import *
 
 def main(args) :
-    auditors = copy(PEOPLES)
-    dba = DBHandler.Auditors()
-    auditorData = dba.get_all()
-    for auditor in auditorData:
-        addPeople(auditors, auditor.doc_id, auditor)
-
-    clients = copy(PEOPLES)
-    dbc = DBHandler.Clients()
-    clientData = dbc.get_all()
-    for client in clientData:
-        addPeople(clients, client.doc_id, client)
-
-    vulns = copy(VULNS)
-    dbv = DBHandler.Vulns()
-    vulnData = dbv.get_all()
-    for vuln in vulnData:
-        addVuln(vulns, vuln.doc_id, vuln)
 
     tabLst = collections.OrderedDict()
     tabLst["Mission"] = copy(MISSION)
-    tabLst["Auditors"] = {"lst":auditors, "db":dba}
-    tabLst["Clients"] = {"lst":clients, "db":dbc}
-    tabLst["Vulns"] = {"vulns":{"class":Vulns,"arg":(vulns, dbv)}}
+    tabLst["Auditors"] = {"lst":copy(PEOPLES), "db":DBHandler.Auditors(),
+                          "addFct":addPeople}
+    tabLst["Clients"] = {"lst":copy(PEOPLES), "db":DBHandler.Clients(),
+                         "addFct":addPeople}
+    tabLst["Vulns"] = {"vulns":{"class":Vulns,"arg":(copy(VULNS),
+                                                     DBHandler.Vulns(),
+                                                     addVuln)}}
 
     app=QApplication(args)
     window = Window('Repator', tabLst)
