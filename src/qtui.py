@@ -80,7 +80,7 @@ class Window(QWidget):
     def generate(self):
         values = {}
         for tabname, tab in self.tabs.items():
-            values[tabname] = tab.save()
+            values[tabname] = tab.save(db=False)
 
         p = Generator.generate_json(values)
         doc = Document(docx=REPORT_TEMPLATE_BASE)
@@ -289,7 +289,7 @@ class Tab(QScrollArea):
                 if "setDate" in dir(field):
                     field.setDate(QDate.fromString(value))
 
-    def save(self):
+    def save(self, db=False):
         if "list" in self.fields:
             lst = self.fields["list"]
             cpt = 0
@@ -308,7 +308,7 @@ class Tab(QScrollArea):
         if "vulns" in self.fields:
             self.values = self.fields["vulns"].save()
 
-        if self.db is not None:
+        if db and self.db is not None:
             self.values["db"] = self.db.get_all()
 
         return self.values
