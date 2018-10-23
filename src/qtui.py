@@ -66,7 +66,7 @@ class Window(QWidget):
     def save(self):
         values = {}
         for tabname, tab in self.tabs.items():
-            values[tabname] = tab.save()
+            values[tabname] = tab.save(db=True)
 
         projectFilename = QFileDialog.getSaveFileName(self, "Save Repator Project", "projects/test.rep", "Repator Project files [*.rep] (*.rep);;All files [*] (*)")[0]
         if len(projectFilename) > 0:
