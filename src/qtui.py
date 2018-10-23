@@ -5,7 +5,6 @@ from PyQt5.QtCore import QDate, QDateTime, Qt
 import json
 import collections
 
-from conf.report import *
 from conf.ui import *
 from src.cvss import *
 from src.reportgenerator import *
@@ -82,11 +81,9 @@ class Window(QWidget):
         for tabname, tab in self.tabs.items():
             values[tabname] = tab.save(db=False)
 
-        p = Generator.generate_json(values)
-        doc = Document(docx=REPORT_TEMPLATE_BASE)
-        Generator.generate_docx(doc, p)
-        doc.save(REPORT_OUTPUT)
+        outputFilename = QFileDialog.getSaveFileName(self, "Generate Report", "output.docx", "Microsoft Document [*.docx] (*.docx);;All files [*] (*)")[0]
 
+        Generator.generate_all(values, outputFilename)
 
 class Tab(QScrollArea):
     def __init__(self, parent, lst, db=None, addFct=None):

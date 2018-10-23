@@ -139,9 +139,10 @@ class Generator:
         return d
 
 
-    def generate_json(json_content):
+    def generate_json(json_content, template):
+        template_path = REPORT_TEMPLATE_DIR+template+"/"
         structure = None
-        with open(REPORT_TEMPLATE_MAIN, "r") as f:
+        with open(template_path + REPORT_TEMPLATE_MAIN, "r") as f:
             structure = f.read()
             structure = json.loads(structure)
 
@@ -149,7 +150,7 @@ class Generator:
         result_json["type"] = "report"
         result_json["content"] = []
         for e in structure:
-            with open(REPORT_TEMPLATE_DIR + e + ".json", "r") as f:
+            with open(template_path + e + ".json", "r") as f:
                 file_content = f.read()
             json_file_content = json.loads(file_content)
             res = Generator.__do_fill(json_file_content, json_content)
@@ -168,7 +169,6 @@ class Generator:
         return out
 
     def generate_docx(document, json):
-
         if isinstance(json, str):
             document.text = json
 
@@ -205,6 +205,15 @@ class Generator:
                     Generator.generate_docx(document, content)
             else:
                 Generator.generate_docx(document, json["content"])
+
+    def generate_all(values, outputFilename):
+        template = values["Mission"]["template"]
+
+        p = Generator.generate_json(values, template)
+
+        doc = Document(docx=REPORT_TEMPLATE_DIR+template+"/"+REPORT_TEMPLATE_BASE)
+        Generator.generate_docx(doc, p)
+        doc.save(outputFilename)
 
 ### testing
 # d = {"general": {"date_start": "11/11/11",
