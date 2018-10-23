@@ -105,7 +105,6 @@ class Tab(QScrollArea):
 
         if self.db is not None and self.addFct is not None:
             items = self.db.get_all()
-            print(items)
             for item in items:
                 self.addFct(self.lst, item.doc_id, item)
 
