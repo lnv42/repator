@@ -315,7 +315,11 @@ class Tab(QScrollArea):
         vuln = self.db.search_by_id(int(docId))
         lst = vulnEditing(docId, vuln)
         self._parent.addTab(str(docId), lst, self.db)
-        self._parent.tabs[str(docId)].updateCvss(docId)
+        if len(LANGUAGES) > 1:
+            for lang in LANGUAGES:
+                self._parent.tabs[str(docId)][lang].updateCvss(docId)
+        else:
+            self._parent.tabs[str(docId)].updateCvss(docId)
 
     def addVuln(self):
         docId = self.db.insert_record()
@@ -474,9 +478,19 @@ class Vulns(QWidget):
         if label in self.tabs:
             self.tabw.setCurrentWidget(self.tabs[label])
         else:
-            self.tabs[label] = Tab(self, lst, db, addFct)
-            self.tabw.addTab(self.tabs[label], label)
-            self.tabw.setCurrentWidget(self.tabs[label])
+            if label == "All" or len(LANGUAGES) == 1:
+                self.tabs[label] = Tab(self, lst, db, addFct)
+                self.tabw.addTab(self.tabs[label], label)
+                self.tabw.setCurrentWidget(self.tabs[label])
+            else:
+                tabw = QTabWidget()
+                tabs = collections.OrderedDict()
+                for lang in LANGUAGES:
+                    tabs[lang] = Tab(self, lst, db, addFct)
+                    tabw.addTab(tabs[lang], lang)
+                self.tabs[label] = tabs
+                self.tabw.addTab(tabw, label)
+                self.tabw.setCurrentWidget(tabw)
 
     def closeTab(self, index):
         self.tabs[self.tabw.tabText(index)].saveHistories()

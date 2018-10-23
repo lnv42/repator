@@ -30,3 +30,9 @@ MISSION["template"] = {"label":"Template",
                        "class":QComboBox,
                        "signal":"currentTextChanged",
                        "items":os.listdir(REPORT_TEMPLATE_DIR)}
+
+if len(LANGUAGES) > 1:
+    MISSION["language"] = {"label":"Language",
+                           "class":QComboBox,
+                           "signal":"currentTextChanged",
+                           "items":LANGUAGES}
