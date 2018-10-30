@@ -171,6 +171,7 @@ class Generator:
     def generate_docx(document, json):
         if isinstance(json, str):
             document.text = json
+            return
 
         if "type" in json:
             if json["type"] == "table":
