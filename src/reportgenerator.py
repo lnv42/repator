@@ -64,8 +64,10 @@ class Generator:
                 l.append(Generator.__do_fill(e, content))
             return l
 
-        if "content" not in d and "type" not in d:
+        if "type" not in d:
             return d
+
+        d["type"] = Generator.__sub_dict(content, d["type"])
 
         if d["type"] == "unordered_list" or d["type"] == "ordered_list":
             l = []
@@ -103,28 +105,25 @@ class Generator:
                 if vuln["category"] != cat:
                     cat = vuln["category"]
                     sub_cat = None
-                    template = dict(d["catContent"])
-                    template["content"] = Generator.__do_fill(template["content"],vuln)
+                    template = Generator.__do_fill(dict(d["catContent"]),vuln)
                     l.append(template)
 
                 if vuln["sub_category"] != sub_cat:
                     sub_cat = vuln["sub_category"]
-                    template = dict(d["subcatContent"])
-                    template["content"] = Generator.__do_fill(template["content"],vuln)
+                    template = Generator.__do_fill(dict(d["subcatContent"]),vuln)
                     l.append(template)
 
                 for content in d["content-"+vuln["status"]]:
-                    template = dict(content)
-                    template["content"] = Generator.__do_fill(template["content"],vuln)
+                    template = Generator.__do_fill(dict(content),vuln)
                     l.append(template)
             d["content"] = l
             return d
 
-        if "content" not in d:
-            return d
-
         if "filer" in d:
             content = content[d["filer"]]
+
+        if "content" not in d:
+            return d
 
         if type(d["content"]) is list:
             l = []
