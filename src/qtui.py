@@ -493,7 +493,11 @@ class Vulns(QWidget):
                 self.tabw.setCurrentWidget(tabw)
 
     def closeTab(self, index):
-        self.tabs[self.tabw.tabText(index)].saveHistories()
+        if len(LANGUAGES) == 1:
+            self.tabs[self.tabw.tabText(index)].saveHistories()
+        else:
+            for lang in LANGUAGES:
+                self.tabs[self.tabw.tabText(index)][lang].saveHistories()
         del self.tabs[self.tabw.tabText(index)]
         self.tabw.removeTab(index)
 
