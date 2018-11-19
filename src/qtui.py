@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
+import json
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QDate, QDateTime, Qt
-import json
-import collections
+from collections import OrderedDict
 
 from conf.ui import *
 from src.cvss import *
@@ -97,7 +97,7 @@ class Tab(QScrollArea):
     def initTab(self):
         self.row = 0
         self.lst = self.headLst
-        self.values = collections.OrderedDict()
+        self.values = OrderedDict()
         self.fields = {}
 
         if self.db is not None and self.addFct is not None:
@@ -303,6 +303,7 @@ class Tab(QScrollArea):
 
         if "vulns" in self.fields:
             self.values = self.fields["vulns"].save()
+            self.values = OrderedDict(sorted(self.fields["vulns"].save().items()))
 
         if db and self.db is not None:
             self.values["db"] = self.db.get_all()
