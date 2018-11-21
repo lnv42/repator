@@ -1,0 +1,3 @@
+pyqt5>=5.7
+tinydb>=3.12.1
+-e git+https://github.com/lnv42/python-docx@master#egg=python-docx
