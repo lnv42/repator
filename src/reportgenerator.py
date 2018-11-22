@@ -3,6 +3,8 @@ import json
 from collections import OrderedDict
 from docx import Document
 from docx.shared import Cm
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_ALIGN_VERTICAL
 
 from conf.report import *
 from src.cvss import *
@@ -167,18 +169,45 @@ class Generator:
         out = Generator.__cut_after(out, "</w:body>")
         return out
 
-    def generate_docx(document, json):
-        if isinstance(json, str):
-            document.text = json
-            return
+    def __align(alignment):
+        return getattr(WD_ALIGN_PARAGRAPH, alignment)
 
-        if "type" in json:
-            if json["type"] == "table":
-                table = document.add_table(json["row"], json["col"], json["style"])
-                for row in range(0,json["row"]):
-                    for col in range(0,json["col"]):
-                        Generator.generate_docx(table.cell(row, col),
-                                                json["content"][row][col])
+    def __vAlign(alignment):
+        return getattr(WD_ALIGN_VERTICAL, alignment)
+
+    def __generate_table(document, json):
+        table = document.add_table(json["row"], json["col"], json["style"])
+        for row in range(0,json["row"]):
+            for col in range(0,json["col"]):
+                Generator.generate_docx(table.cell(row, col),
+                                        json["content"][row][col])
+                if "alignment" in json:
+                    for p in table.cell(row, col).paragraphs:
+                        p.alignment = Generator.__align(json["alignment"])
+
+                if "colAlignment" in json:
+                    for p in table.cell(row, col).paragraphs:
+                        p.alignment = Generator.__align(json["colAlignment"][col])
+                if "rowAlignment" in json:
+                    for p in table.cell(row, col).paragraphs:
+                        p.alignment = Generator.__align(json["rowAlignment"][row])
+
+                if "celAlignment" in json:
+                    for p in table.cell(row, col).paragraphs:
+                        p.alignment = Generator.__align(json["celAlignment"][row][col])
+
+                if "vAlignment" in json:
+                    table.cell(row, col).vertical_alignment = Generator.__vAlign(json["vAlignment"])
+
+                if "colVAlignment" in json:
+                    table.cell(row, col).vertical_alignment = Generator.__vAlign(json["colVAlignment"][col])
+
+                if "rowVAlignment" in json:
+                    table.cell(row, col).vertical_alignment = Generator.__vAlign(json["rowVAlignment"][row])
+
+                if "celVAlignment" in json:
+                    table.cell(row, col).vertical_alignment = Generator.__vAlign(json["celVAlignment"][row][col])
+
                 if "width" in json:
                     col = 0
                     for width in json["width"]:
@@ -198,6 +227,15 @@ class Generator:
                 if "vBand" in json:
                     table.v_band(json["vBand"])
 
+    def generate_docx(document, json):
+        if isinstance(json, str):
+            document.text = json
+            return
+
+        if "type" in json:
+            if json["type"] == "table":
+                Generator.__generate_table(document, json)
+
             if json["type"] == "document":
                 newDoc = Document(json["path"])
 
@@ -208,12 +246,20 @@ class Generator:
                     p.paragraph_format = paragraph.paragraph_format
 
         if "name" in json:
-            document.add_paragraph(json["name"], json["type"])
+            p = document.add_paragraph(json["name"], json["type"])
+            if "alignment" in json:
+                p.alignment = Generator.__align(json["alignment"])
 
         if "content" in json:
             if isinstance(json["content"], str):
                 contentTable = json["content"].split("[[HYPERLINK]]")
+                if "type" not in json:
+                    json["type"] = "Normal"
+
                 p = document.add_paragraph(contentTable[0], json["type"])
+
+                if "alignment" in json:
+                    p.alignment = Generator.__align(json["alignment"])
 
                 for cpt in range(1, len(contentTable)):
                     if cpt%2:
