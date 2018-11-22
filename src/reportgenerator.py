@@ -212,7 +212,16 @@ class Generator:
 
         if "content" in json:
             if isinstance(json["content"], str):
-                document.add_paragraph(json["content"], json["type"])
+                contentTable = json["content"].split("[[HYPERLINK]]")
+                p = document.add_paragraph(contentTable[0], json["type"])
+
+                for cpt in range(1, len(contentTable)):
+                    if cpt%2:
+                        hyperlink = contentTable[cpt].split("||")
+                        p.add_hyperlink(hyperlink[0], hyperlink[1], style="Hyperlink")
+                    else:
+                        p.add_run(contentTable[cpt])
+
             elif isinstance(json["content"], list):
                 for content in json["content"]:
                     Generator.generate_docx(document, content)
