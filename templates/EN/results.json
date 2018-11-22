@@ -32,6 +32,7 @@
                     "style": "Grid Table 2",
                     "firstRow": 0,
                     "firstCol":0,
+                    "alignment":"CENTER",
                     "content": [
                         ["Impact", "Exploitability", "Risk", "CVSSv3 Score"],
                         ["##impLvl##", "##expLvl##", "##riskLvl##", "##cvss##"]
@@ -44,6 +45,7 @@
                     "style": "Grid Table 2",
                     "firstRow": 0,
                     "firstCol":0,
+                    "alignment":"CENTER",
                     "content": [
                         ["AV", "AC", "PR", "UI", "S", "C", "I", "A"],
                         ["##AV#0##", "##AC#0##", "##PR#0##", "##UI#0##", "##S#0##", "##C#0##", "##I#0##", "##A#0##"]

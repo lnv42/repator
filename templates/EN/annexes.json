@@ -15,8 +15,10 @@
             "firstRow": 0,
             "hBand": 0,
             "vBand": 1,
+            "vAlignment":"CENTER",
+            "rowAlignment":["LEFT","RIGHT","CENTER"],
             "content": [
-                ["haha", "blalalalalalala", "5"],
+                ["haha", "blalalala\nlalala", "5"],
                 ["hihi", "blalalalalalalablalalalalalal", "6"],
                 ["hoho", "fesfefesfesfesfesofesmko", "7"]
             ]
