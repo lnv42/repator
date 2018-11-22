@@ -185,6 +185,19 @@ class Generator:
                         table.columns[col].width = Cm(width)
                         col += 1
 
+                if "firstCol" in json:
+                    table.first_col = json["firstCol"]
+                if "firstRow" in json:
+                    table.first_row = json["firstRow"]
+                if "lastCol" in json:
+                    table.last_col = json["lastCol"]
+                if "lastRow" in json:
+                    table.last_row = json["lastRow"]
+                if "hBand" in json:
+                    table.h_band(json["hBand"])
+                if "vBand" in json:
+                    table.v_band(json["vBand"])
+
             if json["type"] == "document":
                 newDoc = Document(json["path"])
 
