@@ -8,14 +8,17 @@
 		},
         {
             "type": "table",
-            "col":2,
+            "style": "Grid Table 2",
+            "col":3,
             "row":3,
-            "width": [2.4, 14.6],
-            "style": "Table Grid",
+            "width": [4, 10, 3],
+            "firstRow": 0,
+            "hBand": 0,
+            "vBand": 1,
             "content": [
-                ["haha", "blalalalalalala"],
-                ["hihi", "blalalalalalalablalalalalalal"],
-                ["hoho", "fesfefesfesfesfesofesmko"]
+                ["haha", "blalalalalalala", "5"],
+                ["hihi", "blalalalalalalablalalalalalal", "6"],
+                ["hoho", "fesfefesfesfesfesofesmko", "7"]
             ]
         },
         {
