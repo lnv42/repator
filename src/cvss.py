@@ -1,5 +1,9 @@
+# coding=utf-8
+
+
 def vulnCvssv3(v):
     return cvssv3(v["AV"], v["AC"], v["PR"], v["UI"], v["S"], v["C"], v["I"], v["A"])
+
 
 def cvssv3(av, ac, pr, ui, s, c, i, a):
     AV = {"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}
@@ -18,10 +22,10 @@ def cvssv3(av, ac, pr, ui, s, c, i, a):
     i = CIA[i[0]]
     a = CIA[a[0]]
     exp = 8.22 * av * ac * pr * ui
-    imp = 1-((1-c)*(1-i)*(1-a))
+    imp = 1 - ((1 - c) * (1 - i) * (1 - a))
     if s == "Changed":
-        imp = 7.52*(imp-0.029) - 3.25*(imp-0.02)**15
-        score = 1.08 * (imp+exp)
+        imp = 7.52 * (imp - 0.029) - 3.25 * (imp - 0.02) ** 15
+        score = 1.08 * (imp + exp)
     else:
         imp = 6.42 * imp
         score = imp + exp
@@ -29,10 +33,12 @@ def cvssv3(av, ac, pr, ui, s, c, i, a):
         score = 0.0
     if score > 10:
         score = 10.0
-    return round(score,1), round(imp,1), round(exp,1)
+    return round(score, 1), round(imp, 1), round(exp, 1)
+
 
 def vulnRiskLevel(v):
     return riskLevel(v["AV"], v["AC"], v["PR"], v["UI"], v["S"], v["C"], v["I"], v["A"])
+
 
 def riskLevel(av, ac, pr, ui, s, c, i, a):
     CIA = {"N": 0, "L": 1, "H": 2}
@@ -42,11 +48,11 @@ def riskLevel(av, ac, pr, ui, s, c, i, a):
     a = CIA[a[0]]
     s = S[s[0]]
 
-    if c == 2 or i == 2 or (c*2+i*2+a >= 5 and s):
+    if c == 2 or i == 2 or (c * 2 + i * 2 + a >= 5 and s):
         iLvl = 4
-    elif a == 2 or c*2+i*2+a >= 5 or (c*2+i*2+a >= 3 and s):
+    elif a == 2 or c * 2 + i * 2 + a >= 5 or (c * 2 + i * 2 + a >= 3 and s):
         iLvl = 3
-    elif c*2+i*2+a >= 3 or s:
+    elif c * 2 + i * 2 + a >= 3 or s:
         iLvl = 2
     else:
         iLvl = 1
@@ -78,8 +84,8 @@ def riskLevel(av, ac, pr, ui, s, c, i, a):
     else:
         rLvl = 4
 
-    RLVL = {1:"Low", 2:"Medium", 3:"High", 4:"Very High"}
-    ILVL = {1:"Low", 2:"Medium", 3:"High", 4:"Very High"}
-    ELVL = {1:"Dificult", 2:"Medium", 3:"Easy", 4:"Very Easy"}
+    RLVL = {1: "Low", 2: "Medium", 3: "High", 4: "Very High"}
+    ILVL = {1: "Low", 2: "Medium", 3: "High", 4: "Very High"}
+    ELVL = {1: "Dificult", 2: "Medium", 3: "Easy", 4: "Very Easy"}
 
     return RLVL[rLvl], ILVL[iLvl], ELVL[eLvl]

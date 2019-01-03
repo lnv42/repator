@@ -1,16 +1,22 @@
+# coding=utf-8
+
+
 from tinydb import TinyDB, Query
-from os import path,mkdir
+from os import path, mkdir
 
 from conf.db import *
 
-class DBHandler:
 
+class DBHandler:
+    @staticmethod
     def Auditors():
         return DBHandler(DB_AUDITORS, DB_AUDITORS_DEFAULT)
 
+    @staticmethod
     def Clients():
         return DBHandler(DB_CLIENTS, DB_CLIENTS_DEFAULT)
 
+    @staticmethod
     def Vulns():
         return DBHandler(DB_VULNS, DB_VULNS_DEFAULT)
 
@@ -36,13 +42,13 @@ class DBHandler:
         ids = []
         for r in l:
             if name in r:
-                return False # column already exist
+                return False  # column already exist
             ids.append(r.doc_id)
         self.db.update(cols, doc_ids=ids)
         return True
 
     def insert_record(self, d=None):
-        if d == None:
+        if d is None:
             d = dict(self.search_by_id(1))
             for k in d:
                 d[k] = ""
@@ -69,7 +75,7 @@ class DBHandler:
         return self.db.update(record, doc_ids=[id_])
 
     def delete(self, id_):
-        return self.db.remove(doc_ids = [id_])
+        return self.db.remove(doc_ids=[id_])
 
     def purge(self):
         self.db.purge()
@@ -77,6 +83,7 @@ class DBHandler:
 
     def close(self):
         self.db.close()
+
 
 """    
 # Testing

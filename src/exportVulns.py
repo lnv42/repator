@@ -1,10 +1,13 @@
+# coding=utf-8
+
+
 import csv
 import sys
 
-from conf.db import *
 from src.dbhandler import *
 
-def main(args) :
+
+def main(args):
     dbv = DBHandler.Vulns()
     vulnData = dbv.get_all()
     vulns = DB_VULNS_DEFAULT
