@@ -1,6 +1,8 @@
+# coding=utf-8
+
+
 import re
 import json
-from collections import OrderedDict
 from docx import Document
 from docx.shared import Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -9,9 +11,12 @@ from docx.enum.table import WD_ALIGN_VERTICAL
 from conf.report import *
 from src.cvss import *
 
+
 class Generator:
     def __escape_str(s):
-        return s.replace("\a", "\\a").replace("\b", "\\b").replace("\f", "\\f").replace("\r", "\\r").replace("\t", "\\t").replace("\v", "\\v")
+        return s.replace("\a", "\\a").replace("\b", "\\b").replace("\f", "\\f").replace("\r", "\\r").replace("\t",
+                                                                                                             "\\t").replace(
+            "\v", "\\v")
 
     def generate_report(json_content):
         if type(json_content) is str:
@@ -26,7 +31,7 @@ class Generator:
         with open("templates/" + json_content["type"] + ".tex") as f:
             file_content = f.read()
         final_content = file_content
-        final_content = re.sub("##.*NAME##", json_content["name"],final_content)
+        final_content = re.sub("##.*NAME##", json_content["name"], final_content)
 
         content = ""
         if type(json_content["content"]) is list:
@@ -37,21 +42,22 @@ class Generator:
         elif type(json_content["content"]) is str:
             content += Generator.generate_report(json_content["content"])
 
-        final_content = re.sub("##.*CONTENT##", content,final_content)
+        final_content = re.sub("##.*CONTENT##", content, final_content)
         return Generator.__escape_str(final_content)
 
     def __sub_dict(d, text):
         for name, value in d.items():
             if type(value) is str:
-                text = re.sub("##"+name+"##", value, text)
-                m = re.search("##"+name+r"#(\d+)##", text, re.MULTILINE)
+                text = re.sub("##" + name + "##", value, text)
+                m = re.search("##" + name + r"#(\d+)##", text, re.MULTILINE)
                 if m is not None:
-                    text = re.sub("##"+name+"#"+m.group(1)+"##", value[int(m.group(1))], text)
-                m = re.search("##"+name+r"#(\d+):(\d+)##", text, re.MULTILINE)
+                    text = re.sub("##" + name + "#" + m.group(1) + "##", value[int(m.group(1))], text)
+                m = re.search("##" + name + r"#(\d+):(\d+)##", text, re.MULTILINE)
                 if m is not None:
-                    text = re.sub("##"+name+"#"+m.group(1)+":"+m.group(2)+"##", value[int(m.group(1)):int(m.group(2))], text)
+                    text = re.sub("##" + name + "#" + m.group(1) + ":" + m.group(2) + "##",
+                                  value[int(m.group(1)):int(m.group(2))], text)
             else:
-                text = re.sub("##"+name+"##", str(value), text)
+                text = re.sub("##" + name + "##", str(value), text)
 
         return text
 
@@ -76,7 +82,7 @@ class Generator:
             for e in content[d["filer"]].values():
                 for content in d["content"]:
                     template = dict(content)
-                    template["content"] = Generator.__do_fill(template["content"],e)
+                    template["content"] = Generator.__do_fill(template["content"], e)
                     l.append(template)
             d["content"] = l
             return d
@@ -93,7 +99,7 @@ class Generator:
                 if (vuln["riskLvl"] == match and vuln["status"] == "Vulnerable") or vuln["status"] == match:
                     for content in d["content"]:
                         template = dict(content)
-                        template["content"] = Generator.__do_fill(template["content"],vuln)
+                        template["content"] = Generator.__do_fill(template["content"], vuln)
                         l.append(template)
             d["content"] = l
             return d
@@ -107,16 +113,16 @@ class Generator:
                 if vuln["category"] != cat:
                     cat = vuln["category"]
                     sub_cat = None
-                    template = Generator.__do_fill(dict(d["catContent"]),vuln)
+                    template = Generator.__do_fill(dict(d["catContent"]), vuln)
                     l.append(template)
 
                 if vuln["sub_category"] != sub_cat:
                     sub_cat = vuln["sub_category"]
-                    template = Generator.__do_fill(dict(d["subcatContent"]),vuln)
+                    template = Generator.__do_fill(dict(d["subcatContent"]), vuln)
                     l.append(template)
 
-                for content in d["content-"+vuln["status"]]:
-                    template = Generator.__do_fill(dict(content),vuln)
+                for content in d["content-" + vuln["status"]]:
+                    template = Generator.__do_fill(dict(content), vuln)
                     l.append(template)
             d["content"] = l
             return d
@@ -135,13 +141,12 @@ class Generator:
         elif type(d["content"]) is str:
             d["content"] = Generator.__sub_dict(content, d["content"])
         else:
-                d["content"] = Generator.__do_fill(d["content"], content)
+            d["content"] = Generator.__do_fill(d["content"], content)
 
         return d
 
-
     def generate_json(json_content, template):
-        template_path = REPORT_TEMPLATE_DIR+template+"/"
+        template_path = REPORT_TEMPLATE_DIR + template + "/"
         structure = None
         with open(template_path + REPORT_TEMPLATE_MAIN, "r") as f:
             structure = f.read()
@@ -159,7 +164,7 @@ class Generator:
         return result_json
 
     def __cut_before(string, match):
-        return string[string.find(match)+len(match):]
+        return string[string.find(match) + len(match):]
 
     def __cut_after(string, match):
         return string[0:string.find(match)]
@@ -177,8 +182,8 @@ class Generator:
 
     def __generate_table(document, json):
         table = document.add_table(json["row"], json["col"], json["style"])
-        for row in range(0,json["row"]):
-            for col in range(0,json["col"]):
+        for row in range(0, json["row"]):
+            for col in range(0, json["col"]):
                 Generator.generate_docx(table.cell(row, col),
                                         json["content"][row][col])
                 if "alignment" in json:
@@ -262,7 +267,7 @@ class Generator:
                     p.alignment = Generator.__align(json["alignment"])
 
                 for cpt in range(1, len(contentTable)):
-                    if cpt%2:
+                    if cpt % 2:
                         hyperlink = contentTable[cpt].split("||")
                         p.add_hyperlink(hyperlink[0], hyperlink[1], style="Hyperlink")
                     else:
@@ -279,7 +284,7 @@ class Generator:
 
         p = Generator.generate_json(values, template)
 
-        doc = Document(docx=REPORT_TEMPLATE_DIR+template+"/"+REPORT_TEMPLATE_BASE)
+        doc = Document(docx=REPORT_TEMPLATE_DIR + template + "/" + REPORT_TEMPLATE_BASE)
         Generator.generate_docx(doc, p)
         doc.save(outputFilename)
 

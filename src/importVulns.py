@@ -1,9 +1,11 @@
+# coding=utf-8
+
 
 import csv
-from conf.db import *
 from src.dbhandler import *
 
-def main(args) :
+
+def main(args):
     vulns = DB_VULNS_DEFAULT
     vulnKeys = []
     for key in vulns.keys():
@@ -33,7 +35,7 @@ def main(args) :
                     break
                 continue
 
-            for key,value in zip(vulnKeys,row):
+            for key, value in zip(vulnKeys, row):
                 newVuln[key] = value
 
             dbv.insert_record(newVuln)
