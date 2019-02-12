@@ -27,13 +27,11 @@ def main(conf=None):
     if conf is not None:
         if path.exists(conf):
             config = ConfigParser()
+            config.optionxform = str
             config.read(conf)
-            # for a reason I can't explain dates are not parsed... any idea lnv42?
             window.loadDict({s: dict(config.items(s)) for s in config.sections()})
         else:
             window.loadDict({})
-    # window.loadJson('{"Mission": {"dateStart": "lun. avr. 23 2018", "dateEnd": "ven. avr. 27 2018", "client":"feafe", '
-    #                 '"environment": "pr\u00e9-production"}, "Auditors": {}, "Vulns": {"AV1": "P"}}')
     window.showMaximized()
 
     app.exec_()
