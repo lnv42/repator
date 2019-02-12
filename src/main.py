@@ -2,14 +2,18 @@
 
 from copy import copy
 from sys import path
-import configparser
 import fire
+from configparser import ConfigParser
+from collections import OrderedDict
+from PyQt5.QtWidgets import QApplication
 
-from src.qtui import *
-
+from conf.ui import *
+from src.dbhandler import *
+from src.ui.window import Window
+from src.ui.vulns import Vulns
 
 def main(conf=None):
-    tabLst = collections.OrderedDict()
+    tabLst = OrderedDict()
     tabLst["Mission"] = copy(MISSION)
     tabLst["Auditors"] = dict(lst=copy(PEOPLE), db=DBHandler.Auditors(), addFct=addPeople)
     tabLst["Clients"] = dict(lst=copy(PEOPLE), db=DBHandler.Clients(), addFct=addPeople)
@@ -22,7 +26,7 @@ def main(conf=None):
     # then, just use repator.py --conf=path or repator.py path (or nothing to use default)
     if conf is not None:
         if path.exists(conf):
-            config = configparser.ConfigParser()
+            config = ConfigParser()
             config.read(conf)
             # for a reason I can't explain dates are not parsed... any idea lnv42?
             window.loadDict({s: dict(config.items(s)) for s in config.sections()})
