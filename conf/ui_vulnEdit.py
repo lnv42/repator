@@ -4,6 +4,8 @@
 from PyQt5.QtWidgets import QLabel, QLineEdit, QComboBox, QTextEdit
 import collections
 
+from src.ui.richTextEdit import RichTextEdit
+
 
 def vulnEditing(doc_id, vuln):
     # to avoid the crash when editing a new vuln or a partial vuln loaded from db
@@ -50,7 +52,7 @@ def vulnEditing(doc_id, vuln):
                                            "signal": "currentTextChanged",
                                            "signalFct": "loadHistory",
                                            "items": vuln["observHistory"]}
-    lst["observ-" + str(doc_id)] = {"class": QTextEdit,
+    lst["observ-" + str(doc_id)] = {"class": RichTextEdit,
                                     "label": "Observation",
                                     "signal": "textChanged",
                                     "signalFct": "updateVuln",
@@ -60,7 +62,7 @@ def vulnEditing(doc_id, vuln):
                                          "signal": "currentTextChanged",
                                          "signalFct": "loadHistory",
                                          "items": vuln["riskHistory"]}
-    lst["risk-" + str(doc_id)] = {"class": QTextEdit,
+    lst["risk-" + str(doc_id)] = {"class": RichTextEdit,
                                   "label": "Risk",
                                   "signal": "textChanged",
                                   "signalFct": "updateVuln",
@@ -70,7 +72,7 @@ def vulnEditing(doc_id, vuln):
                                          "signal": "currentTextChanged",
                                          "signalFct": "loadHistory",
                                          "items": vuln["recoHistory"]}
-    lst["reco-" + str(doc_id)] = {"class": QTextEdit,
+    lst["reco-" + str(doc_id)] = {"class": RichTextEdit,
                                   "label": "Recommandation",
                                   "signal": "textChanged",
                                   "signalFct": "updateVuln",

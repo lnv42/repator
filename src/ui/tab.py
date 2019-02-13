@@ -57,7 +57,13 @@ class Tab(QScrollArea):
 
     def updateVuln(self, string=None):
         sender = self.sender()
-        fieldName = sender.accessibleName()
+        while True:
+            fieldName = sender.accessibleName()
+            if len(fieldName) > 0:
+                break
+            if sender.parent() is None:
+                return
+            sender = sender.parent()
 
         fieldTab = fieldName.split('-')
 

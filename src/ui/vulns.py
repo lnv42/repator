@@ -4,6 +4,7 @@
 from PyQt5.QtWidgets import *
 from collections import OrderedDict
 
+from conf.ui import *
 from src.ui.tab import Tab
 
 class Vulns(QWidget):
