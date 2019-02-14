@@ -5,32 +5,32 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont
 
 class RichTextEdit(QWidget):
-    bbcode = OrderedDict()
-    bbcode[re.compile("<p.*?>")] = ""
-    bbcode["</p>"] = ""
-    bbcode[re.compile("<span.*?font-weight:600; font-style:italic; text-decoration: underline;.*?>(.*?)</span>")] = "[b][i][u]\\1[/u][/i][/b]"
-    bbcode[re.compile("<span.*?font-weight:600; font-style:italic;.*?>(.*?)</span>")] = "[b][i]\\1[/i][/b]"
-    bbcode[re.compile("<span.*?font-weight:600; text-decoration: underline;.*?>(.*?)</span>")] = "[b][u]\\1[/u][/b]"
-    bbcode[re.compile("<span.*?font-style:italic; text-decoration: underline;.*?>(.*?)</span>")] = "[i][u]\\1[/u][/i]"
-    bbcode[re.compile("<span.*?font-weight:600;.*?>(.*?)</span>")] = "[b]\\1[/b]"
-    bbcode[re.compile("<span.*?font-style:italic;.*?>(.*?)</span>")] = "[i]\\1[/i]"
-    bbcode[re.compile("<span.*?text-decoration: underline;.*?>(.*?)</span>")] = "[u]\\1[/u]"
+    bbcode1 = OrderedDict()
+    bbcode1[re.compile("<p.*?>")] = ""
+    bbcode1["</p>"] = ""
+    bbcode1[re.compile("<span(.*?)>(.*?)</span>")] = "<\\1>\\2</\\1>"
+
+    bbcode2 = OrderedDict()
+    bbcode2["</"] = "/"
+    bbcode2["font-weight"] = "b"
+    bbcode2["italic"] = "i"
+    bbcode2["underline"] = "u"
 
     html = OrderedDict()
     html["\n"] = "<br/>"
-    html["[b][i][u]"] = '<span style="font-weight:600; font-style:italic; text-decoration: underline;">'
-    html["[/u][/i][/b]"] = "</span>"
-    html["[b][i]"] = '<span style="font-weight:600; font-style:italic;">'
-    html["[/i][/b]"] = "</span>"
-    html["[b][u]"] = '<span style="font-weight:600; text-decoration: underline;">'
-    html["[/u][/b]"] = "</span>"
-    html["[i][u]"] = '<span style="font-style:italic; text-decoration: underline;">'
-    html["[/u][/i]"] = "</span>"
+    html["[biu]"] = '<span style="font-weight:600; font-style:italic; text-decoration:underline;">'
+    html["[/biu]"] = "</span>"
+    html["[bi]"] = '<span style="font-weight:600; font-style:italic;">'
+    html["[/bi]"] = "</span>"
+    html["[bu]"] = '<span style="font-weight:600; text-decoration:underline;">'
+    html["[/bu]"] = "</span>"
+    html["[iu]"] = '<span style="font-style:italic; text-decoration:underline;">'
+    html["[/iu]"] = "</span>"
     html["[b]"] = '<span style="font-weight:600;">'
     html["[/b]"] = "</span>"
     html["[i]"] = '<span style="font-style:italic;">'
     html["[/i]"] = "</span>"
-    html["[u]"] = '<span style="text-decoration: underline;">'
+    html["[u]"] = '<span style="text-decoration:underline;">'
     html["[/u]"] = "</span>"
     html[re.compile("^(<br.*?/>)+", re.M)] = ""
 
@@ -42,6 +42,24 @@ class RichTextEdit(QWidget):
             else:
                 strout = regex.sub(replace, strout)
 
+        return strout
+
+    def bbcodeEncoder(strin, replaceTab):
+        strout = strin
+        pos1 = strout.find('<')
+        while pos1 >= 0:
+            pos2 = strout.find('>')
+            str1 = strout[pos1:pos2+1]
+            str2 = ""
+            for match, replace in replaceTab.items():
+                if str1.find(match) >= 0:
+                    str2 += replace
+
+            if len(str2) > 0:
+                str2 = "[" + str2 + "]"
+
+            strout = strout.replace(str1, str2)
+            pos1 = strout.find('<')
         return strout
 
     def __init__(self, args, parent):
@@ -64,7 +82,8 @@ class RichTextEdit(QWidget):
         body = html[html.find("<body"):]
         body = body[body.find(">")+1:]
         body = body[0:body.find("</body>")]
-        text = RichTextEdit.megaReplace(body, RichTextEdit.bbcode)
+        text = RichTextEdit.megaReplace(body, RichTextEdit.bbcode1)
+        text = RichTextEdit.bbcodeEncoder(text, RichTextEdit.bbcode2)
         return text
 
     def setPlainText(self, text):
