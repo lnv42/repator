@@ -46,11 +46,17 @@
 		{
 			"name": "Image Testing",
 			"type": "Heading 2",
-            "content": {
-                "type": "image",
-			    "path": "testimg.jpg",
-                "width": 15
-            }
+            "content": [
+                {
+                    "type": "image",
+			        "path": "testimg.jpg",
+                    "width": 15
+                },
+                {
+                    "type": "Normal",
+                    "content": "Test of included in text image here[[IMAGE]]testimg.jpg||3[[/IMAGE]], before that text"
+                }
+            ]
 		},
 		{
 			"name": "Generated lists",

@@ -15,6 +15,7 @@ from src.cvss import *
 class Generator:
     styleRegex = re.compile("\[\[(B?I?U?)\]\](.*?)\[\[/B?I?U?\]\]")
     hyperlinkRegex = re.compile("\[\[HYPERLINK\]\](.*?)\|\|(.*?)\[\[/HYPERLINK\]\]")
+    imageRegex = re.compile("\[\[IMAGE\]\](.*?)\|\|(.*?)\[\[/IMAGE\]\]")
 
     def __escape_str(s):
         return s.replace("\a", "\\a").replace("\b", "\\b").replace("\f", "\\f").replace("\r", "\\r").replace("\t",
@@ -249,7 +250,10 @@ class Generator:
                     width = Cm(json["width"])
                 if "height" in json:
                     height = Cm(json["height"])
-                document.add_picture(REPORT_TEMPLATE_DIR + template + "/" + json["path"], width, height)
+                path = json["path"]
+                if path[0] != '/':
+                    path = REPORT_TEMPLATE_DIR + template + "/" + path
+                document.add_picture(path, width, height)
             if json["type"] == "table":
                 Generator.__generate_table(document, json, template)
 
@@ -280,26 +284,38 @@ class Generator:
                 hyperlinkSplit = Generator.hyperlinkRegex.split(json["content"])
                 for cpt in range(0, len(hyperlinkSplit)):
                     if cpt%3 == 0:
-                        txt = hyperlinkSplit[cpt]
-                        styleSplit = Generator.styleRegex.split(txt)
-                        for cpt2 in range(0, len(styleSplit)):
+                        txt1 = hyperlinkSplit[cpt]
+                        imageSplit = Generator.imageRegex.split(txt1)
+                        for cpt2 in range(0, len(imageSplit)):
                             if cpt2%3 == 0:
-                                p.add_run(styleSplit[cpt2])
+                                txt2 = imageSplit[cpt2]
+                                styleSplit = Generator.styleRegex.split(txt2)
+                                for cpt3 in range(0, len(styleSplit)):
+                                    if cpt3%3 == 0:
+                                        p.add_run(styleSplit[cpt3])
+                                    elif cpt3%3 == 1:
+                                        bold = p.style.font.bold
+                                        italic = p.style.font.italic
+                                        underline = p.style.font.underline
+                                        if styleSplit[cpt3].find("B") >= 0:
+                                            bold = True
+                                        if styleSplit[cpt3].find("I") >= 0:
+                                            italic = True
+                                        if styleSplit[cpt3].find("U") >= 0:
+                                            underline = True
+                                    else:
+                                        run = p.add_run(styleSplit[cpt3])
+                                        run.bold = bold
+                                        run.italic = italic
+                                        run.underline = underline
                             elif cpt2%3 == 1:
-                                bold = p.style.font.bold
-                                italic = p.style.font.italic
-                                underline = p.style.font.underline
-                                if styleSplit[cpt2].find("B") >= 0:
-                                    bold = True
-                                if styleSplit[cpt2].find("I") >= 0:
-                                    italic = True
-                                if styleSplit[cpt2].find("U") >= 0:
-                                    underline = True
+                                run = p.add_run()
+                                path = imageSplit[cpt2]
+                                if path[0] != '/':
+                                    path = REPORT_TEMPLATE_DIR + template + "/" + path
+                                run.add_picture(path, Cm(int(imageSplit[cpt2+1])))
                             else:
-                                run = p.add_run(styleSplit[cpt2])
-                                run.bold = bold
-                                run.italic = italic
-                                run.underline = underline
+                                continue
                     elif cpt%3 == 1:
                         p.add_hyperlink(hyperlinkSplit[cpt], hyperlinkSplit[cpt+1], style="Hyperlink")
                     else:
