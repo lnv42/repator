@@ -183,12 +183,13 @@ class Generator:
     def __vAlign(alignment):
         return getattr(WD_ALIGN_VERTICAL, alignment)
 
-    def __generate_table(document, json):
+    def __generate_table(document, json, template):
         table = document.add_table(json["row"], json["col"], json["style"])
         for row in range(0, json["row"]):
             for col in range(0, json["col"]):
                 Generator.generate_docx(table.cell(row, col),
-                                        json["content"][row][col])
+                                        json["content"][row][col],
+                                        template)
                 if "alignment" in json:
                     for p in table.cell(row, col).paragraphs:
                         p.alignment = Generator.__align(json["alignment"])
@@ -235,17 +236,17 @@ class Generator:
                 if "vBand" in json:
                     table.v_band(json["vBand"])
 
-    def generate_docx(document, json):
+    def generate_docx(document, json, template):
         if isinstance(json, str):
             document.text = json
             return
 
         if "type" in json:
             if json["type"] == "table":
-                Generator.__generate_table(document, json)
+                Generator.__generate_table(document, json, template)
 
             if json["type"] == "document":
-                newDoc = Document(json["path"])
+                newDoc = Document(REPORT_TEMPLATE_DIR + template + "/" + json["path"])
 
                 for paragraph in newDoc.paragraphs:
                     text = paragraph.text
@@ -298,9 +299,9 @@ class Generator:
 
             elif isinstance(json["content"], list):
                 for content in json["content"]:
-                    Generator.generate_docx(document, content)
+                    Generator.generate_docx(document, content, template)
             else:
-                Generator.generate_docx(document, json["content"])
+                Generator.generate_docx(document, json["content"], template)
 
     def generate_all(values, outputFilename):
         template = values["Mission"]["template"]
@@ -308,5 +309,5 @@ class Generator:
         p = Generator.generate_json(values, template)
 
         doc = Document(docx=REPORT_TEMPLATE_DIR + template + "/" + REPORT_TEMPLATE_BASE)
-        Generator.generate_docx(doc, p)
+        Generator.generate_docx(doc, p, template)
         doc.save(outputFilename)
