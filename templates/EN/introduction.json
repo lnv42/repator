@@ -44,6 +44,15 @@
             ]
 		},
 		{
+			"name": "Image Testing",
+			"type": "Heading 2",
+            "content": {
+                "type": "image",
+			    "path": "testimg.jpg",
+                "width": 15
+            }
+		},
+		{
 			"name": "Generated lists",
 			"type": "Heading 2",
 			"content": [

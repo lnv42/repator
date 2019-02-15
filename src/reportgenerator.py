@@ -242,6 +242,14 @@ class Generator:
             return
 
         if "type" in json:
+            if json["type"] == "image":
+                width = None
+                height = None
+                if "width" in json:
+                    width = Cm(json["width"])
+                if "height" in json:
+                    height = Cm(json["height"])
+                document.add_picture(REPORT_TEMPLATE_DIR + template + "/" + json["path"], width, height)
             if json["type"] == "table":
                 Generator.__generate_table(document, json, template)
 
