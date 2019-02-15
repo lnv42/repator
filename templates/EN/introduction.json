@@ -23,6 +23,14 @@
 			    "content": "This chapter contain a filter based on the \"Mission\" tab variables. This allow inclusion of the client name :##client##, the target name :##target##, the start date :##dateStart##, ..."
             }
 		},
+        {
+			"name": "Test bla 2",
+			"type": "Heading 2",
+            "content": {
+                "type": "Normal",
+			    "content": "This chapter contain [[B]]bold[[/B]], [[I]]italic[[/I]], [[U]]underlined[[/U]] and even [[BIU]]mixed[[/BIU]] [[IU]]content[[/IU]]."
+            }
+		},
 		{
 			"name": "Another bla",
 			"type": "Heading 2",
@@ -49,7 +57,7 @@
 					"content": [
 						{
 							"type": "List Paragraph",
-							"content": "##full_name## ([[HYPERLINK]]##email##||mailto:##email##[[HYPERLINK]] ##phone##) as a ##role##"
+							"content": "##full_name## ([[HYPERLINK]]##email##||mailto:##email##[[/HYPERLINK]] ##phone##) as a ##role##"
 						}
 					]
 				},
@@ -63,7 +71,7 @@
 					"content": [
 						{
 							"type": "List Paragraph",
-							"content": "##full_name## ([[HYPERLINK]]##email##||mailto:##email##[[HYPERLINK]] ##phone##) as a ##role##"
+							"content": "##full_name## ([[HYPERLINK]]##email##||mailto:##email##[[/HYPERLINK]] ##phone##) as a ##role##"
 						}
 					]
 				}

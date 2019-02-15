@@ -13,6 +13,9 @@ from src.cvss import *
 
 
 class Generator:
+    styleRegex = re.compile("\[\[(B?I?U?)\]\](.*?)\[\[/B?I?U?\]\]")
+    hyperlinkRegex = re.compile("\[\[HYPERLINK\]\](.*?)\|\|(.*?)\[\[/HYPERLINK\]\]")
+
     def __escape_str(s):
         return s.replace("\a", "\\a").replace("\b", "\\b").replace("\f", "\\f").replace("\r", "\\r").replace("\t",
                                                                                                              "\\t").replace(
@@ -257,21 +260,41 @@ class Generator:
 
         if "content" in json:
             if isinstance(json["content"], str):
-                contentTable = json["content"].split("[[HYPERLINK]]")
                 if "type" not in json:
                     json["type"] = "Normal"
 
-                p = document.add_paragraph(contentTable[0], json["type"])
+                p = document.add_paragraph("", json["type"])
 
                 if "alignment" in json:
                     p.alignment = Generator.__align(json["alignment"])
 
-                for cpt in range(1, len(contentTable)):
-                    if cpt % 2:
-                        hyperlink = contentTable[cpt].split("||")
-                        p.add_hyperlink(hyperlink[0], hyperlink[1], style="Hyperlink")
+                hyperlinkSplit = Generator.hyperlinkRegex.split(json["content"])
+                for cpt in range(0, len(hyperlinkSplit)):
+                    if cpt%3 == 0:
+                        txt = hyperlinkSplit[cpt]
+                        styleSplit = Generator.styleRegex.split(txt)
+                        for cpt2 in range(0, len(styleSplit)):
+                            if cpt2%3 == 0:
+                                p.add_run(styleSplit[cpt2])
+                            elif cpt2%3 == 1:
+                                bold = p.style.font.bold
+                                italic = p.style.font.italic
+                                underline = p.style.font.underline
+                                if styleSplit[cpt2].find("B") >= 0:
+                                    bold = True
+                                if styleSplit[cpt2].find("I") >= 0:
+                                    italic = True
+                                if styleSplit[cpt2].find("U") >= 0:
+                                    underline = True
+                            else:
+                                run = p.add_run(styleSplit[cpt2])
+                                run.bold = bold
+                                run.italic = italic
+                                run.underline = underline
+                    elif cpt%3 == 1:
+                        p.add_hyperlink(hyperlinkSplit[cpt], hyperlinkSplit[cpt+1], style="Hyperlink")
                     else:
-                        p.add_run(contentTable[cpt])
+                        continue
 
             elif isinstance(json["content"], list):
                 for content in json["content"]:
@@ -287,29 +310,3 @@ class Generator:
         doc = Document(docx=REPORT_TEMPLATE_DIR + template + "/" + REPORT_TEMPLATE_BASE)
         Generator.generate_docx(doc, p)
         doc.save(outputFilename)
-
-### testing
-# d = {"general": {"date_start": "11/11/11",
-#                  "date_end": "12/12/12"},
-
-#      "clients": [{"name": "john doe",
-#                   "email": "john@doe.com",
-#                   "tel": "+33 66 55 44 33",
-#                   "role": "CEO"}],
-
-#      "auditors": [{"name": "haxor auditor",
-#                    "email": "haxor@auditor.com",
-#                    "tel": "31337",
-#                    "role": "pro-hacker"},
-
-#                   {"name": "script kiddie",
-#                    "email": "skiddie@mail.com",
-#                    "tel": "123456",
-#                    "role": "skiddie"}]}
-
-# p = (Generator.generate_json(d))
-# #print(p)
-# #print(Generator.generate_report(p))
-# doc = Document(docx="templates/template.docx")
-# Generator.generate_docx(doc, p)
-# doc.save("test.docx")
