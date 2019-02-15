@@ -8,30 +8,31 @@ class RichTextEdit(QWidget):
     bbcode1 = OrderedDict()
     bbcode1[re.compile("<p.*?>")] = ""
     bbcode1["</p>"] = ""
+    bbcode1[re.compile("<br.*?/>")] = "\n"
     bbcode1[re.compile("<span(.*?)>(.*?)</span>")] = "<\\1>\\2</\\1>"
 
     bbcode2 = OrderedDict()
     bbcode2["</"] = "/"
-    bbcode2["font-weight"] = "b"
-    bbcode2["italic"] = "i"
-    bbcode2["underline"] = "u"
+    bbcode2["font-weight"] = "B"
+    bbcode2["italic"] = "I"
+    bbcode2["underline"] = "U"
 
     html = OrderedDict()
     html["\n"] = "<br/>"
-    html["[biu]"] = '<span style="font-weight:600; font-style:italic; text-decoration:underline;">'
-    html["[/biu]"] = "</span>"
-    html["[bi]"] = '<span style="font-weight:600; font-style:italic;">'
-    html["[/bi]"] = "</span>"
-    html["[bu]"] = '<span style="font-weight:600; text-decoration:underline;">'
-    html["[/bu]"] = "</span>"
-    html["[iu]"] = '<span style="font-style:italic; text-decoration:underline;">'
-    html["[/iu]"] = "</span>"
-    html["[b]"] = '<span style="font-weight:600;">'
-    html["[/b]"] = "</span>"
-    html["[i]"] = '<span style="font-style:italic;">'
-    html["[/i]"] = "</span>"
-    html["[u]"] = '<span style="text-decoration:underline;">'
-    html["[/u]"] = "</span>"
+    html["[[BIU]]"] = '<span style="font-weight:600; font-style:italic; text-decoration:underline;">'
+    html["[[/BIU]]"] = "</span>"
+    html["[[BI]]"] = '<span style="font-weight:600; font-style:italic;">'
+    html["[[/BI]]"] = "</span>"
+    html["[[BU]]"] = '<span style="font-weight:600; text-decoration:underline;">'
+    html["[[/BU]]"] = "</span>"
+    html["[[IU]]"] = '<span style="font-style:italic; text-decoration:underline;">'
+    html["[[/IU]]"] = "</span>"
+    html["[[B]]"] = '<span style="font-weight:600;">'
+    html["[[/B]]"] = "</span>"
+    html["[[I]]"] = '<span style="font-style:italic;">'
+    html["[[/I]]"] = "</span>"
+    html["[[U]]"] = '<span style="text-decoration:underline;">'
+    html["[[/U]]"] = "</span>"
     html[re.compile("^(<br.*?/>)+", re.M)] = ""
 
     def megaReplace(strin, replaceTab):
@@ -56,7 +57,7 @@ class RichTextEdit(QWidget):
                     str2 += replace
 
             if len(str2) > 0:
-                str2 = "[" + str2 + "]"
+                str2 = "[[" + str2 + "]]"
 
             strout = strout.replace(str1, str2)
             pos1 = strout.find('<')
