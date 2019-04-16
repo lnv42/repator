@@ -7,76 +7,93 @@ import collections
 from src.ui.richTextEdit import RichTextEdit
 
 
-def vulnEditing(doc_id, vuln):
+def vulnEditing(doc_id, vuln, lang=""):
     # to avoid the crash when editing a new vuln or a partial vuln loaded from db
-    vuln.setdefault("labelNeg", "")
-    vuln.setdefault("labelPos", "")
-    vuln.setdefault("recoHistory", "")
-    vuln.setdefault("reco", "")
+    vuln = collections.defaultdict(lambda: "", vuln)
+
     lst = collections.OrderedDict()
-    lst["id-" + str(doc_id)] = {"class": QLabel,
-                                "label": "ID",
-                                "arg": str(doc_id)}
-    lst["category-" + str(doc_id)] = {"class": QLineEdit,
-                                      "label": "Category",
-                                      "signal": "textChanged",
-                                      "signalFct": "updateVuln",
-                                      "arg": vuln["category"]}
-    lst["sub_category-" + str(doc_id)] = {"class": QLineEdit,
-                                          "label": "Sub Category",
-                                          "signal": "textChanged",
-                                          "signalFct": "updateVuln",
-                                          "arg": vuln["sub_category"]}
-    lst["name-" + str(doc_id)] = {"class": QLineEdit,
-                                  "label": "Vulnerability",
-                                  "signal": "textChanged",
-                                  "signalFct": "updateVuln",
-                                  "arg": vuln["name"]}
-    lst["labelNeg-" + str(doc_id)] = {"class": QLineEdit,
-                                      "label": "Negative Label",
-                                      "signal": "textChanged",
-                                      "signalFct": "updateVuln",
-                                      "arg": vuln["labelNeg"]}
-    lst["labelPos-" + str(doc_id)] = {"class": QLineEdit,
-                                      "label": "Positive Label",
-                                      "signal": "textChanged",
-                                      "signalFct": "updateVuln",
-                                      "arg": vuln["labelPos"]}
-    # lst["isVuln-"+str(doc_id)] = {"class":QComboBox,
-    #                               "label":"Status",
-    #                               #"signal":"currentTextChanged",
-    #                               #"signalFct":"updateVuln",
-    #                               "items":("NA", "Vulnerable", "Not Vulnerable", "TODO")}
-    lst["observHistory-" + str(doc_id)] = {"class": QComboBox,
-                                           "label": "Observation History",
-                                           "signal": "currentTextChanged",
-                                           "signalFct": "loadHistory",
-                                           "items": vuln["observHistory"]}
-    lst["observ-" + str(doc_id)] = {"class": RichTextEdit,
-                                    "label": "Observation",
-                                    "signal": "textChanged",
-                                    "signalFct": "updateVuln",
-                                    "arg": vuln["observ"].replace("\n", "<br/>")}
-    lst["riskHistory-" + str(doc_id)] = {"class": QComboBox,
-                                         "label": "Risk History",
-                                         "signal": "currentTextChanged",
-                                         "signalFct": "loadHistory",
-                                         "items": vuln["riskHistory"]}
-    lst["risk-" + str(doc_id)] = {"class": RichTextEdit,
-                                  "label": "Risk",
-                                  "signal": "textChanged",
-                                  "signalFct": "updateVuln",
-                                  "arg": vuln["risk"].replace("\n", "<br/>")}
-    lst["recoHistory-" + str(doc_id)] = {"class": QComboBox,
-                                         "label": "Recommandation History",
-                                         "signal": "currentTextChanged",
-                                         "signalFct": "loadHistory",
-                                         "items": vuln["recoHistory"]}
-    lst["reco-" + str(doc_id)] = {"class": RichTextEdit,
-                                  "label": "Recommandation",
-                                  "signal": "textChanged",
-                                  "signalFct": "updateVuln",
-                                  "arg": vuln["reco"].replace("\n", "<br/>")}
+    lst["id-" + str(doc_id)] = {
+        "class": QLabel,
+        "label": "ID",
+        "arg": str(doc_id)
+    }
+    lst["category"+lang+"-" + str(doc_id)] = {
+        "class": QLineEdit,
+        "label": "Category",
+        "signal": "textChanged",
+        "signalFct": "updateVuln",
+        "arg": vuln["category"+lang] if vuln["category"+lang] else vuln["category"]
+    }
+    lst["sub_category"+lang+"-" + str(doc_id)] = {
+        "class": QLineEdit,
+        "label": "Sub Category",
+        "signal": "textChanged",
+        "signalFct": "updateVuln",
+        "arg": vuln["sub_category"+lang] if vuln["sub_category"+lang] else vuln["sub_category"]
+    }
+    lst["name"+lang+"-" + str(doc_id)] = {
+        "class": QLineEdit,
+        "label": "Vulnerability",
+        "signal": "textChanged",
+        "signalFct": "updateVuln",
+        "arg": vuln["name"+lang] if vuln["name"+lang] else vuln["name"]
+    }
+    lst["labelNeg"+lang+"-" + str(doc_id)] = {
+        "class": QLineEdit,
+        "label": "Negative Label",
+        "signal": "textChanged",
+        "signalFct": "updateVuln",
+        "arg": vuln["labelNeg"+lang] if vuln["labelNeg"+lang] else vuln["labelNeg"]
+    }
+    lst["labelPos"+lang+"-" + str(doc_id)] = {
+        "class": QLineEdit,
+        "label": "Positive Label",
+        "signal": "textChanged",
+        "signalFct": "updateVuln",
+        "arg": vuln["labelPos"+lang] if vuln["labelPos"+lang] else vuln["labelPos"]
+    }
+    lst["observHistory"+lang+"-" + str(doc_id)] = {
+        "class": QComboBox,
+        "label": "Observation History",
+        "signal": "currentTextChanged",
+        "signalFct": "loadHistory",
+        "items": vuln["observHistory"+lang] if vuln["observHistory"+lang] else vuln["observHistory"]
+    }
+    lst["observ"+lang+"-" + str(doc_id)] = {
+        "class": RichTextEdit,
+        "label": "Observation",
+        "signal": "textChanged",
+        "signalFct": "updateVuln",
+        "arg": vuln["observ"+lang].replace("\n", "<br/>") if vuln["observ"+lang] else vuln["observ"].replace("\n", "<br/>")
+    }
+    lst["riskHistory"+lang+"-" + str(doc_id)] = {
+        "class": QComboBox,
+        "label": "Risk History",
+        "signal": "currentTextChanged",
+        "signalFct": "loadHistory",
+        "items": vuln["riskHistory"+lang] if vuln["riskHistory"+lang] else vuln["riskHistory"]
+    }
+    lst["risk"+lang+"-" + str(doc_id)] = {
+        "class": RichTextEdit,
+        "label": "Risk",
+        "signal": "textChanged",
+        "signalFct": "updateVuln",
+        "arg": vuln["risk"+lang].replace("\n", "<br/>") if vuln["risk"+lang] else vuln["risk"].replace("\n", "<br/>")
+    }
+    lst["recoHistory"+lang+"-" + str(doc_id)] = {
+        "class": QComboBox,
+        "label": "Recommandation History",
+        "signal": "currentTextChanged",
+        "signalFct": "loadHistory",
+        "items": vuln["recoHistory"+lang] if vuln["recoHistory"+lang] else vuln["recoHistory"]
+    }
+    lst["reco"+lang+"-" + str(doc_id)] = {
+        "class": RichTextEdit,
+        "label": "Recommandation",
+        "signal": "textChanged",
+        "signalFct": "updateVuln",
+        "arg": vuln["reco"+lang].replace("\n", "<br/>") if vuln["reco"+lang] else vuln["reco"].replace("\n", "<br/>")
+    }
     lst["CVSS"] = {"class": QLabel,
                    "col": 0}
     lst["AV0"] = {"class": QLabel,

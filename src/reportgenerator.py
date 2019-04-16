@@ -330,6 +330,14 @@ class Generator:
     def generate_all(values, outputFilename):
         template = values["Mission"]["template"]
 
+        if len(LANGUAGES) > 1:
+            lang = values["Mission"]["language"]
+            if lang != LANGUAGES[0]:
+                for vuln in values["Vulns"].values():
+                    for name in vuln.keys():
+                        if name+lang in vuln:
+                            vuln[name] = vuln[name+lang]
+
         p = Generator.generate_json(values, template)
 
         doc = Document(docx=REPORT_TEMPLATE_DIR + template + "/" + REPORT_TEMPLATE_BASE)

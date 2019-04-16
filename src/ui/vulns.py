@@ -46,7 +46,7 @@ class Vulns(QWidget):
                 tabw = QTabWidget()
                 tabs = OrderedDict()
                 for lang in LANGUAGES:
-                    tabs[lang] = Tab(self, lst, db, addFct)
+                    tabs[lang] = Tab(self, lst[lang], db, addFct)
                     tabw.addTab(tabs[lang], lang)
                 self.tabs[label] = tabs
                 self.tabw.addTab(tabw, label)

@@ -245,7 +245,17 @@ class Tab(QScrollArea):
         sender = self.sender()
         docId = sender.accessibleName().split("-")[1]
         vuln = self.db.search_by_id(int(docId))
-        lst = vulnEditing(docId, vuln)
+        if len(LANGUAGES) > 1:
+            firstLang = True
+            lst = dict()
+            for lang in LANGUAGES:
+                if firstLang:
+                    lst[lang] = vulnEditing(docId, vuln)
+                    firstLang = False
+                else:
+                    lst[lang] = vulnEditing(docId, vuln, lang)
+        else:
+            lst = vulnEditing(docId, vuln)
         self._parent.addTab(str(docId), lst, self.db)
         if len(LANGUAGES) > 1:
             for lang in LANGUAGES:
