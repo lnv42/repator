@@ -3,6 +3,7 @@
 
 from tinydb import TinyDB, Query
 from os import path, mkdir
+import collections
 
 from conf.db import *
 
@@ -28,7 +29,7 @@ class DBHandler:
 
         self.path = db_path
         self.defaultValues = defaultValues
-        self.db = TinyDB(db_path)
+        self.db = TinyDB(db_path, indent=2, object_pairs_hook=collections.OrderedDict)
 
         if newDb:
             self.insert_record(defaultValues)
@@ -49,7 +50,7 @@ class DBHandler:
 
     def insert_record(self, d=None):
         if d is None:
-            d = dict(self.search_by_id(1))
+            d = collections.OrderedDict(self.search_by_id(1))
             for k in d:
                 d[k] = ""
         return self.db.insert(d)
