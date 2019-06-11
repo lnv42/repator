@@ -1,1 +1,114 @@
-{"_default": {"1": {"UI": "Required", "A": "None", "S": "Unchanged", "AV": "Network", "C": "None", "I": "None", "name": "Dummy name", "riskHistory": ["New Risk"], "AC": "Low", "category": "", "observHistory": ["New Observation"], "observ": "", "sub_category": "", "risk": "", "PR": "None"}, "2": {"A": "High", "labelPos": "No user supplied inputs are vulnerable to SQL injection", "C": "High", "AC": "Low", "labelNeg": "Some user supplied inputs are vulnerable to SQL injection", "riskHistory": ["New Risk", "SQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution."], "sub_category": "User input validation", "risk": "SQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution.", "observ": "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code.", "reco": "Never trust user supplied inputs, apply some filtering before using them into SQL queries.\nUse SQL prepared statements instead of regular queries.", "PR": "None", "S": "Changed", "AV": "Network", "name": "SQL Injection", "recoHistory": ["New Recommandation", "Never trust user supplied inputs, apply some filtering before using them into SQL queries.\nUse SQL prepared statements instead of regular queries."], "category": "Web Application", "observHistory": ["New Observation", "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code."], "I": "High", "UI": "None"}, "3": {"A": "High", "labelPos": "No user supplied inputs are vulnerable to Cross-Site-Scripting (XSS)", "C": "High", "AC": "Low", "labelNeg": "Some user supplied inputs are vulnerable to Cross-Site-Scripting (XSS)", "riskHistory": ["New Risk", "XSS may be used by malicious peoples to have some client-side code execution.\nThis code execution can be used for example to steal user's session, to steal user's sensitives data or to perform some actions using his authorizations."], "sub_category": "User input validation", "risk": "XSS may be used by malicious peoples to have some client-side code execution.\nThis code execution can be used for example to steal user's session, to steal user's sensitives data or to perform some actions using his authorizations.", "observ": "Some user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages.", "reco": "Never trust user supplied inputs, apply some filtering before including them into web pages.", "PR": "None", "S": "Changed", "AV": "Network", "name": "XSS", "recoHistory": ["New Recommandation", "Never trust user supplied inputs, apply some filtering before including them into web pages."], "category": "Web Application", "observHistory": ["New Observation", "Some user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages."], "I": "High", "UI": "None"}, "4": {"A": "High", "labelPos": "Test label not vuln", "C": "Low", "AC": "High", "labelNeg": "Test label Vuln", "riskHistory": ["New Risk", "Test Risk\nBlabla"], "sub_category": "Test Sub Category", "risk": "Test Risk\nBlabla", "observ": "Test Observation\nblabla", "reco": "Test Recommandation\nBlabla", "PR": "Low", "S": "Unchanged", "AV": "Local", "name": "Test Vuln", "recoHistory": ["New Recommandation", "Test Recommandation\nBlabla"], "category": "Test Category", "observHistory": ["New Observation", "Test Observation\nblabla"], "I": "Low", "UI": "Required"}}}
+{
+  "_default": {
+    "1": {
+      "category": "",
+      "sub_category": "",
+      "name": "Dummy name",
+      "labelNeg": "",
+      "labelPos": "",
+      "observ": "",
+      "observHistory": [
+        "New Observation"
+      ],
+      "risk": "",
+      "riskHistory": [
+        "New Risk"
+      ],
+      "reco": "",
+      "recoHistory": [
+        "New Recommandation"
+      ],
+      "AV": "Network",
+      "AC": "Low",
+      "PR": "None",
+      "UI": "Required",
+      "S": "Unchanged",
+      "C": "None",
+      "I": "None",
+      "A": "None"
+    },
+    "2": {
+      "category": "Web Application",
+      "sub_category": "User input validation",
+      "name": "SQL Injection",
+      "labelNeg": "Some user supplied inputs are vulnerable to SQL injection",
+      "labelPos": "No user supplied inputs are vulnerable to SQL injection",
+      "observ": "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code.",
+      "observHistory": [
+        "New Observation",
+        "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code.",
+        "\nSome user supplied inputs are inefficiently filtered and can be used to execute some SQL code."
+      ],
+      "risk": "\nSQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution.",
+      "riskHistory": [
+        "New Risk",
+        "SQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution.",
+        "\nSQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution."
+      ],
+      "reco": "Never trust user supplied inputs, apply some filtering before using them into SQL queries.\nUse SQL prepared statements instead of regular queries.",
+      "recoHistory": [
+        "New Recommandation",
+        "\nNever trust user supplied inputs, apply some filtering before using them into SQL queries.\nUse SQL prepared statements instead of regular queries."
+      ],
+      "AV": "Network",
+      "AC": "Low",
+      "PR": "None",
+      "UI": "None",
+      "S": "Changed",
+      "C": "High",
+      "I": "High",
+      "A": "High"
+    },
+    "3": {
+      "category": "Web Application",
+      "sub_category": "User input validation",
+      "name": "XSS",
+      "labelNeg": "Some user supplied inputs are vulnerable to Cross-Site-Scripting (XSS)",
+      "labelPos": "No user supplied inputs are vulnerable to Cross-Site-Scripting (XSS)",
+      "observ": "\nSome user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages.",
+      "observHistory": [
+        "New Observation",
+        "\nSome user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages."
+      ],
+      "risk": "\nXSS may be used by malicious peoples to have some client-side code execution.\\nThis code execution can be used for example to steal user's session, to steal user's sensitives data or to perform some actions using his authorizations.",
+      "riskHistory": [
+        "New Risk",
+        "\nXSS may be used by malicious peoples to have some client-side code execution.\\nThis code execution can be used for example to steal user's session, to steal user's sensitives data or to perform some actions using his authorizations."
+      ],
+      "reco": "\nNever trust user supplied inputs, apply some filtering before including them into web pages.",
+      "recoHistory": [
+        "New Recommandation",
+        "\nNever trust user supplied inputs, apply some filtering before including them into web pages."
+      ],
+      "AV": "Network",
+      "AC": "Low",
+      "PR": "None",
+      "UI": "Required",
+      "S": "Changed",
+      "C": "High",
+      "I": "High",
+      "A": "High"
+    },
+    "4": {
+      "category": "",
+      "sub_category": "",
+      "name": "",
+      "labelNeg": "",
+      "labelPos": "",
+      "observ": "",
+      "observHistory": "",
+      "risk": "",
+      "riskHistory": "",
+      "reco": "",
+      "recoHistory": "",
+      "AV": "",
+      "AC": "",
+      "PR": "",
+      "UI": "",
+      "S": "",
+      "C": "",
+      "I": "",
+      "A": ""
+    }
+  }
+}
