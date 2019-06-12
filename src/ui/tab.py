@@ -76,6 +76,10 @@ class Tab(QScrollArea):
 
         historyFieldName = fieldTab[0] + "History-" + fieldTab[1]
 
+        diffName = "diff-" + fieldTab[1]
+        if diffName in self.fields:
+            self.fields[diffName].edited()
+
         if historyFieldName in self.fields:
             if self.fields[historyFieldName].currentText() != string:
                 self.fields[historyFieldName].setCurrentIndex(0)
@@ -263,6 +267,32 @@ class Tab(QScrollArea):
         else:
             self._parent.tabs[str(docId)].updateCvss(docId)
 
+    def delVuln(self):
+        sender = self.sender()
+        docId = sender.accessibleName().split("-")[1]
+        diff = self.fields["diff-"+docId]
+        if diff.status() != DiffStatus.DELETED and diff.status() != DiffStatus.ADDED:
+            diff.deleted()
+            return
+
+        nameLst=list()
+
+        for name in self.fields.keys():
+            split = name.split("-")
+            if len(split) > 1:
+                if name.split("-")[1] == docId:
+                    nameLst.append(name)
+
+        for name in nameLst:
+            self.grid.removeWidget(self.fields[name])
+            self.fields[name].deleteLater()
+            del self.fields[name]
+            del self.lst[name]
+
+        if docId in self.values:
+            del self.values[docId]
+        self.db.delete(int(docId))
+
     def addVuln(self):
         docId = self.db.insert_record()
         lst = collections.OrderedDict()
@@ -270,6 +300,7 @@ class Tab(QScrollArea):
         self.parseLst(lst)
         for ident, field in lst.items():
             self.lst[ident] = field
+        self.fields["diff-"+str(docId)].added()
 
     def addAuditor(self):
         docId = self.db.insert_record()
