@@ -336,11 +336,6 @@ class Tab(QScrollArea):
                     getattr(w, field["signal"]).connect(getattr(self, field["signalFct"]))
                 else:
                     getattr(w, field["signal"]).connect(self.changeValue)
-                if "arg" in field:
-                    try:
-                        getattr(w, field["signal"]).emit(field["arg"])
-                    except:
-                        pass
 
             if "clicked" in field:
                 w.clicked.connect(getattr(self, field["clicked"]))
