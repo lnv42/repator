@@ -318,7 +318,9 @@ class Tab(QScrollArea):
             lst = self.lst
 
         for ident, field in lst.items():
-            if "arg" in field:
+            if "args" in field:
+                w = field["class"](*(field["args"]+[self]))
+            elif "arg" in field:
                 w = field["class"](field["arg"], self)
             else:
                 w = field["class"](self)
