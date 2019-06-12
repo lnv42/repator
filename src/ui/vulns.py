@@ -26,6 +26,10 @@ class Vulns(QWidget):
         for label, lst in tabLst.items():
             self.addTab(label, lst, db, addFct)
 
+        # Remove close button for the first tab ("All")
+        self.tabw.tabBar().setTabButton(0, QTabBar.RightSide, None)
+        self.tabw.tabBar().setTabButton(0, QTabBar.LeftSide, None)
+
         self.grid = QGridLayout()
         self.grid.setSpacing(5)
         self.grid.setContentsMargins(5, 5, 5, 5)
