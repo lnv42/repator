@@ -77,8 +77,8 @@ class Tab(QScrollArea):
         historyFieldName = fieldTab[0] + "History-" + fieldTab[1]
 
         diffName = "diff-" + fieldTab[1]
-        if diffName in self.fields:
-            self.fields[diffName].edited()
+        if diffName in self._parent.tabs["All"].fields:
+            self._parent.tabs["All"].fields[diffName].edited()
 
         if historyFieldName in self.fields:
             if self.fields[historyFieldName].currentText() != string:
