@@ -362,15 +362,6 @@ class Tab(QScrollArea):
             if "help" in field:
                 w.setToolTip(field["help"])
 
-            if "signal" in field:
-                if "signalFct" in field:
-                    getattr(w, field["signal"]).connect(getattr(self, field["signalFct"]))
-                else:
-                    getattr(w, field["signal"]).connect(self.changeValue)
-
-            if "clicked" in field:
-                w.clicked.connect(getattr(self, field["clicked"]))
-
             if "list" in field:
                 for line in field["list"]["lines"]:
                     li = field["list"]["class"](line, w)
@@ -400,6 +391,15 @@ class Tab(QScrollArea):
 
             if "selectionMode" in field:
                 w.setSelectionMode(field["selectionMode"])
+
+            if "signal" in field:
+                if "signalFct" in field:
+                    getattr(w, field["signal"]).connect(getattr(self, field["signalFct"]))
+                else:
+                    getattr(w, field["signal"]).connect(self.changeValue)
+
+            if "clicked" in field:
+                w.clicked.connect(getattr(self, field["clicked"]))
 
             if "label" in field:
                 l = QLabel(field["label"])
