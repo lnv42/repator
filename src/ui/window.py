@@ -84,4 +84,5 @@ class Window(QWidget):
         outputFilename = QFileDialog.getSaveFileName(self, "Generate Report", "output.docx",
                                                      "Microsoft Document [*.docx] (*.docx);;All files [*] (*)")[0]
 
-        Generator.generate_all(values, outputFilename)
+        if outputFilename:
+            Generator.generate_all(values, outputFilename)
