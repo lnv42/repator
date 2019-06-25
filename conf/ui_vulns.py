@@ -11,6 +11,19 @@ VULNS["add"] = {"class": QPushButton,
                 "clicked": "addVuln",
                 "col": 0,
                 "colspan": 2}
+VULNS["categorySort"] = {"class": QComboBox,
+                 "items": {"All"},
+                 "col": 2}
+VULNS["sub_categorySort"] = {"class": QComboBox,
+                 "items": {"All"},
+                 "col": 3}
+VULNS["nameSort"] = {"class": QComboBox,
+                 "items": {"All"},
+                 "col": 4}
+VULNS["statusSort"] = {"class": QComboBox,
+                 "items": ("All", "NA", "TODO", "Not Vulnerable", "Vulnerable"),
+                 "col": 5}
+
 VULNS["id0"] = {"class": QLabel,
                 "arg": "ID",
                 "col": 0,

@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 # coding=utf-8
 
+# To make ordering cleaner and adapted to en_US
+from functools import cmp_to_key
+import locale
 
 from PyQt5.QtCore import QDateTime, Qt
 from PyQt5.QtWidgets import *
@@ -137,6 +140,66 @@ class Tab(QScrollArea):
             self.fields["riskLvl-" + str(docId)].setText(rLvl)
             self.fields["impLvl-" + str(docId)].setText(iLvl)
             self.fields["expLvl-" + str(docId)].setText(eLvl)
+
+    def initSorts(self):
+        # Defined here and not in ui_vulns.py so that this is executed when all
+        # the values are loaded (to avoid infinite loops and that kind of
+        # annoying things)
+        self.fields["add"].clicked.connect(lambda: self.updateTab("category", 0))
+        self.fields["categorySort"].currentTextChanged.connect(lambda: self.updateTab("sub_category", 1))
+        self.fields["categorySort"].activated.connect(self.vulnsSort)
+        self.fields["sub_categorySort"].currentTextChanged.connect(lambda: self.updateTab("name", 2))
+        self.fields["sub_categorySort"].activated.connect(self.vulnsSort)
+        self.fields["nameSort"].activated.connect(self.vulnsSort)
+        self.fields["statusSort"].activated.connect(self.vulnsSort)
+        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+        for i in range(1, self.row + 1):
+            try:
+                self.fields["category-" + str(i)].editingFinished.connect(lambda: self.updateTab("category", 0))
+                self.fields["sub_category-" + str(i)].editingFinished.connect(lambda: self.updateTab("sub_category", 1))
+                self.fields["name-" + str(i)].editingFinished.connect(lambda: self.updateTab("name", 2))
+            except:
+                pass
+        self.updateTab("category", 0)
+
+    def updateTab(self, tab, depth):
+        current = self.fields[tab + "Sort"].currentText()
+        self.fields[tab + "Sort"].clear()
+        values = []
+        currentCategory = self.fields["categorySort"].currentText()
+        currentSub_category = self.fields["sub_categorySort"].currentText()
+        for i in range(1, self.row + 1):
+            try:
+                value = self.fields[tab + "-" + str(i)].text()
+                if (not value in values) and
+                (self.fields["category-" + str(i)].text() == currentCategory or depth < 1) and
+                (self.fields["sub_category-" + str(i)].text() == currentSub_category or depth < 2):
+                    values.append(value)
+            except:
+                pass
+        values = ["All"] + sorted(values, key=cmp_to_key(locale.strcoll))
+        self.fields[tab + "Sort"].addItems(values)
+        if current in values:
+            self.fields[tab + "Sort"].setCurrentText(current)
+        else:
+            self.vulnsSort()
+
+    def vulnsSort(self):
+        currentCategory = self.fields["categorySort"].currentText()
+        currentSub_category = self.fields["sub_categorySort"].currentText()
+        currentName = self.fields["nameSort"].currentText()
+        currentStatus = self.fields["statusSort"].currentText()
+        prefixes = {"id-", "diff-", "category-", "sub_category-", "name-", "isVuln-", "edit-", "delete-"}
+        for i in range(1, self.row + 1):
+            try:
+                if (currentCategory == "All" or currentCategory == self.fields["category-"+str(i)].text()) and (currentSub_category == "All" or currentSub_category == self.fields["sub_category-"+str(i)].text()) and (currentName == "All" or currentName == self.fields["name-"+str(i)].text()) and (currentStatus == "All" or currentStatus == self.fields["isVuln-"+str(i)].currentText()):
+                    for ident in prefixes:
+                        self.fields[ident + str(i)].show()
+                else:
+                    for ident in prefixes:
+                        self.fields[ident + str(i)].hide()
+            except:
+                pass
 
     def enableRow(self, arg=None):
         sender = self.sender()
@@ -292,6 +355,7 @@ class Tab(QScrollArea):
         if docId in self.values:
             del self.values[docId]
         self.db.delete(int(docId))
+        self.updateTab("category", 0)
 
     def addVuln(self):
         docId = self.db.insert_record()
@@ -300,6 +364,10 @@ class Tab(QScrollArea):
         self.parseLst(lst)
         for ident, field in lst.items():
             self.lst[ident] = field
+
+        self.fields["category-" + str(docId)].editingFinished.connect(lambda: self.updateTab("category", 0))
+        self.fields["sub_category-" + str(docId)].editingFinished.connect(lambda: self.updateTab("sub_category", 1))
+        self.fields["name-" + str(docId)].editingFinished.connect(lambda: self.updateTab("name", 2))
         self.fields["diff-"+str(docId)].added()
 
     def addAuditor(self):

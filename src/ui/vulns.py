@@ -37,6 +37,7 @@ class Vulns(QWidget):
         self.grid.addWidget(self.tabw)
 
         self.setLayout(self.grid)
+        self.tabs["All"].initSorts()
 
     def addTab(self, label, lst, db, addFct=None):
         if label in self.tabs:
