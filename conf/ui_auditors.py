@@ -1,5 +1,6 @@
-# coding=utf-8
+"""Defines the UI for the tab "Auditors"."""
 
+# coding=utf-8
 
 import collections
 
@@ -8,13 +9,12 @@ from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QCheckBox
 PEOPLE = collections.OrderedDict()
 PEOPLE["add"] = {"class": QPushButton,
                  "arg": "Add",
-                 "clicked": "addAuditor",
+                 "clicked": "add_auditor",
                  "col": 0}
 PEOPLE["delete"] = {"class": QPushButton,
                     "arg": "Delete",
-                    "clicked": "delAuditor",
+                    "clicked": "del_auditor",
                     "col": 1}
-
 PEOPLE["checkLabel"] = {"class": QLabel,
                         "arg": "Present",
                         "col": 0}
@@ -32,30 +32,31 @@ PEOPLE["rolesLabel"] = {"class": QLabel,
                         "col": 4}
 
 
-def addPeople(lst, doc_id, people):
+def add_people(lst, doc_id, people):
+    """Adds a the arguments to construct a line given later to src.ui.tab.parseLst"""
     lst["check-" + str(doc_id)] = {"class": QCheckBox,
                                    "signal": "stateChanged",
-                                   "signalFct": "enableRow",
+                                   "signalFct": "enable_row",
                                    "col": 0}
     lst["full_name-" + str(doc_id)] = {"class": QLineEdit,
                                        "signal": "textChanged",
-                                       "signalFct": "updateAuditor",
+                                       "signalFct": "update_auditor",
                                        "arg": people["full_name"],
                                        "col": 1}
     lst["phone-" + str(doc_id)] = {"class": QLineEdit,
                                    "signal": "textChanged",
-                                   "signalFct": "updateAuditor",
+                                   "signalFct": "update_auditor",
                                    "arg": people["phone"],
                                    "setLength": 20,
                                    "col": 2}
     lst["email-" + str(doc_id)] = {"class": QLineEdit,
                                    "signal": "textChanged",
-                                   "signalFct": "updateAuditor",
+                                   "signalFct": "update_auditor",
                                    "arg": people["email"],
                                    "col": 3}
     lst["role-" + str(doc_id)] = {"class": QLineEdit,
                                   "signal": "textChanged",
-                                  "signalFct": "updateAuditor",
+                                  "signalFct": "update_auditor",
                                   "arg": people["role"],
                                   "setLength": 30,
                                   "col": 4}

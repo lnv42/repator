@@ -1,98 +1,115 @@
+"""Interface between repator and TinyDB."""
+
 # coding=utf-8
 
-
-from tinydb import TinyDB, Query
 from os import path, mkdir
 import collections
 
-from conf.db import *
+from tinydb import TinyDB, Query
+
+from conf.db import (DB_AUDITORS, DB_AUDITORS_DEFAULT, DB_CLIENTS,
+                     DB_CLIENTS_DEFAULT, DB_VULNS, DB_VULNS_DEFAULT,
+                     DB_VULNS_GIT, DB_VULNS_INITIAL)
 
 
 class DBHandler:
+    """Class that make the link between the DB and repator."""
     @staticmethod
-    def Auditors():
+    def auditors():
+        """Default constructor for Auditors database."""
         return DBHandler(DB_AUDITORS, DB_AUDITORS_DEFAULT)
 
     @staticmethod
-    def Clients():
+    def clients():
+        """Default constructor for Clients database."""
         return DBHandler(DB_CLIENTS, DB_CLIENTS_DEFAULT)
 
     @staticmethod
-    def Vulns():
+    def vulns():
+        """Default constructor for Vulns database."""
         return DBHandler(DB_VULNS, DB_VULNS_DEFAULT)
 
-    def __init__(self, db_path, defaultValues={}):
+    @staticmethod
+    def vulns_git():
+        """Default constructor for Vulns taken from git database."""
+        return DBHandler(DB_VULNS_GIT, DB_VULNS_DEFAULT)
+
+    @staticmethod
+    def vulns_initial():
+        """Default constructor for vulns database when repator has been launched."""
+        return DBHandler(DB_VULNS_INITIAL, DB_VULNS_DEFAULT)
+
+    def __init__(self, db_path, default_values=None):
         if not path.exists(path.dirname(db_path)):
             mkdir(path.dirname(db_path), 0o750)
 
-        newDb = not path.isfile(db_path)
+        new_db = not path.isfile(db_path)
 
         self.path = db_path
-        self.defaultValues = defaultValues
-        self.db = TinyDB(db_path, indent=2, object_pairs_hook=collections.OrderedDict)
+        self.default_values = default_values if default_values else {}
+        self.database = TinyDB(db_path, indent=2,
+                               object_pairs_hook=collections.OrderedDict)
 
-        if newDb:
-            self.insert_record(defaultValues)
+        if new_db:
+            self.insert_record(default_values)
         else:
-            for name, value in defaultValues.items():
+            for name, value in default_values.items():
                 self.insert_column(name, value)
 
     def insert_column(self, name, value):
-        l = self.get_all()
+        """Creates a new column in the database."""
+        values = self.get_all()
         cols = {name: value}
         ids = []
-        for r in l:
-            if name in r:
-                return False  # column already exist
-            ids.append(r.doc_id)
-        self.db.update(cols, doc_ids=ids)
+        for record in values:
+            if name in record:
+                return False  # column already exists
+            ids.append(record.doc_id)
+        self.database.update(cols, doc_ids=ids)
         return True
 
-    def insert_record(self, d=None):
-        if d is None:
-            d = collections.OrderedDict(self.search_by_id(1))
-            for k in d:
-                d[k] = ""
-        return self.db.insert(d)
+    def insert_record(self, dictionary=None):
+        """Adds a new empty record to the database."""
+        if dictionary is None:
+            dictionary = collections.OrderedDict(self.search_by_id(1))
+            for k in dictionary:
+                dictionary[k] = ""
+        return self.database.insert(dictionary)
 
-    def insert_multiple(self, d):
-        return self.db.insert_multiple(d)
+    def insert_multiple(self, dictionary):
+        """Insertion of multiple entries."""
+        return self.database.insert_multiple(dictionary)
 
     def get_all(self):
-        return self.db.all()[1:]
+        """Gets all records but the first one which is a sample record."""
+        return self.database.all()[1:]
 
     def search(self, name, value):
-        q = Query()
-        return self.db.search(q[name] == value)
+        """Implements the search method of TinyDB."""
+        query = Query()
+        return self.database.search(query[name] == value)
 
     def search_by_id(self, id_):
-        return self.db.get(doc_id=id_)
+        """Searches for a document with the id id_ in the database."""
+        return self.database.get(doc_id=id_)
 
     def update(self, id_, name, value):
+        """Modifies the corresponding record in the database."""
         record = self.search_by_id(id_)
         if record is None:
             return False
         record[name] = value
-        return self.db.update(record, doc_ids=[id_])
+        return self.database.update(record, doc_ids=[id_])
 
     def delete(self, id_):
-        return self.db.remove(doc_ids=[id_])
+        """Removes the corresponding record from the database."""
+        return self.database.remove(doc_ids=[id_])
 
     def purge(self):
-        self.db.purge()
-        self.insert_record(self.defaultValues)
+        """Purges the database and adds the default values to the newly created database."""
+        self.database.purge()
+        self.insert_record(self.default_values)
 
     def close(self):
-        self.db.close()
-
-
-"""    
-# Testing
-db = DBHandler('/tmp/db.json')
-db.insert_record({"Name": "SQLi", "Desc": "Inject SQL stuff", "Metrics": {"Exploitability": {"AV": "N", "AC": "M", "AU": "M"}, "Impact": {"C": "C", "I": "C", "A": "C"}}})
-db.insert_record({"Name": "XSS", "Desc": "Inject JS stuff", "Metrics": {"Exploitability": {"AV": "N", "AC": "L", "AU": "M"}, "Impact": {"C": "C", "I": "C", "A": "N"}}})
-db.insert_record({"Name": "CSRF", "Desc": "Make user do stuff", "Metrics": {"Exploitability": {"AV": "N", "AC": "H", "AU": "M"}, "Impact": {"C": "N", "I": "C", "A": "N"}}})
-print(type(db.get_all()[0].doc_id))
-db.insert_column("Score", 5.5)
-print(db.search("Name", "XSS"))
-"""
+        """Implements the close method of TinyDB."""
+        self.database.close()

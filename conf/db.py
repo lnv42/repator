@@ -1,8 +1,15 @@
+"""Defines db files and default values"""
+
+# coding=utf-8
+
 import collections
 
 DB_AUDITORS = "db/auditors.json"
 DB_CLIENTS = "db/clients.json"
 DB_VULNS = "db/vulnerabilities.json"
+DB_VULNS_INITIAL = "db/vulnerabilitiesInitial.json"
+DB_VULNS_GIT = "db/vulnerabilitiesGit.json"
+DB_VULNS_GIT_UPDATED = ".tmpGit/vulnerabilities.json"
 
 DB_AUDITORS_DEFAULT = collections.OrderedDict()
 DB_AUDITORS_DEFAULT["full_name"] = "Dummy name"

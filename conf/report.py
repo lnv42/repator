@@ -1,7 +1,25 @@
+"""Defines global settings for report and git."""
+
+# coding=utf-8
+
 REPORT_TEMPLATE_DIR = "templates/"
 REPORT_TEMPLATE_MAIN = "main.json"
 REPORT_TEMPLATE_BASE = "template.docx"
 
 REPORT_OUTPUT = "output.docx"
 
-LANGUAGES = ["EN"]
+LANGUAGES = ["EN", "FR"]
+# LANGUAGES = ["EN"]
+
+GREEN = '#008000'
+RED = '#ff0000'
+BLUE = '#4169e1'
+DEFAULT = '#000000'
+COLORS = [BLUE, GREEN, RED, DEFAULT]
+HEADERS = {"category", "sub_category", "name", "labelNeg", "labelPos"}
+CVSS = {"AV", "AC", "PR", "UI", "S", "C", "I", "A"}
+HISTORIES = {"reco", "observ", "risk"}
+
+SSH_KEY = ""
+GIT = ""
+REFRESH_RATE = 10
