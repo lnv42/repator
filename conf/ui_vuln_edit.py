@@ -23,18 +23,24 @@ def vuln_editing(doc_id, vuln, lang=""):
         "arg": str(doc_id)
     }
     lst["category"+lang+"-" + str(doc_id)] = {
-        "class": QLabel,
+        "class": QLineEdit if lang else QLabel,
         "label": "Category",
+        "signal": "textChanged" if lang else "linkActivated",
+        "signalFct": "update_vuln",
         "arg": vuln["category"+lang] if vuln["category"+lang] else vuln["category"]
     }
     lst["sub_category"+lang+"-" + str(doc_id)] = {
-        "class": QLabel,
+        "class": QLineEdit if lang else QLabel,
         "label": "Sub Category",
+        "signal": "textChanged" if lang else "linkActivated",
+        "signalFct": "update_vuln",
         "arg": vuln["sub_category"+lang] if vuln["sub_category"+lang] else vuln["sub_category"]
     }
     lst["name"+lang+"-" + str(doc_id)] = {
-        "class": QLabel,
+        "class": QLineEdit if lang else QLabel,
         "label": "Vulnerability",
+        "signal": "textChanged" if lang else "linkActivated",
+        "signalFct": "update_vuln",
         "arg": vuln["name"+lang] if vuln["name"+lang] else vuln["name"]
     }
     lst["labelNeg"+lang+"-" + str(doc_id)] = {
