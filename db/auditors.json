@@ -1,10 +1,10 @@
 {
   "_default": {
     "1": {
-      "full_name": "test",
+      "full_name": "Dummy name",
       "phone": "+33 1 23 45 67 89",
-      "email": "",
-      "role": ""
+      "email": "dummy.name@email.com",
+      "role": "Pentester"
     },
     "2": {
       "full_name": "Auditor 1",

@@ -37,18 +37,18 @@
       "observHistory": [
         "New Observation",
         "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code.",
-        "\nSome user supplied inputs are inefficiently filtered and can be used to execute some SQL code."
+        "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code."
       ],
-      "risk": "\nSQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution.",
+      "risk": "SQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution.",
       "riskHistory": [
         "New Risk",
         "SQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution.",
-        "\nSQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution."
+        "SQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution."
       ],
       "reco": "Never trust user supplied inputs, apply some filtering before using them into SQL queries.\nUse SQL prepared statements instead of regular queries.",
       "recoHistory": [
         "New Recommandation",
-        "\nNever trust user supplied inputs, apply some filtering before using them into SQL queries.\nUse SQL prepared statements instead of regular queries."
+        "Never trust user supplied inputs, apply some filtering before using them into SQL queries.\nUse SQL prepared statements instead of regular queries."
       ],
       "AV": "Network",
       "AC": "Low",
@@ -65,20 +65,20 @@
       "name": "XSS",
       "labelNeg": "Some user supplied inputs are vulnerable to Cross-Site-Scripting (XSS)",
       "labelPos": "No user supplied inputs are vulnerable to Cross-Site-Scripting (XSS)",
-      "observ": "\nSome user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages.",
+      "observ": "Some user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages.",
       "observHistory": [
         "New Observation",
-        "\nSome user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages."
+        "Some user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages."
       ],
-      "risk": "\nXSS may be used by malicious peoples to have some client-side code execution.\\nThis code execution can be used for example to steal user's session, to steal user's sensitives data or to perform some actions using his authorizations.",
+      "risk": "XSS may be used by malicious peoples to have some client-side code execution.\\nThis code execution can be used for example to steal user's session, to steal user's sensitives data or to perform some actions using his authorizations.",
       "riskHistory": [
         "New Risk",
-        "\nXSS may be used by malicious peoples to have some client-side code execution.\\nThis code execution can be used for example to steal user's session, to steal user's sensitives data or to perform some actions using his authorizations."
+        "XSS may be used by malicious peoples to have some client-side code execution.\\nThis code execution can be used for example to steal user's session, to steal user's sensitives data or to perform some actions using his authorizations."
       ],
-      "reco": "\nNever trust user supplied inputs, apply some filtering before including them into web pages.",
+      "reco": "Never trust user supplied inputs, apply some filtering before including them into web pages.",
       "recoHistory": [
         "New Recommandation",
-        "\nNever trust user supplied inputs, apply some filtering before including them into web pages."
+        "Never trust user supplied inputs, apply some filtering before including them into web pages."
       ],
       "AV": "Network",
       "AC": "Low",
