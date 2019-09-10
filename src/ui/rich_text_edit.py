@@ -25,8 +25,7 @@ class RichTextEdit(QWidget):
 
     html = OrderedDict()
     html["\n"] = "<br/>"
-    html["[[BIU]]"] = '<span style="font-weight:600; font-style:italic; \
-        text-decoration:underline;">'
+    html["[[BIU]]"] = '<span style="font-weight:600; font-style:italic; text-decoration:underline;">'
     html["[[/BIU]]"] = "</span>"
     html["[[BI]]"] = '<span style="font-weight:600; font-style:italic;">'
     html["[[/BI]]"] = "</span>"
@@ -57,7 +56,7 @@ class RichTextEdit(QWidget):
     def bbcode_encoder(strin, replace_tab):
         """Modifies strin to include bbcodes."""
         strout = strin
-        pos1 = strout.find('<')
+        pos1 = strout.find('<') # find first tag
         while pos1 >= 0:
             pos2 = strout.find('>')
             str1 = strout[pos1:pos2+1]
@@ -65,10 +64,12 @@ class RichTextEdit(QWidget):
             for match, replace in replace_tab.items():
                 if str1.find(match) >= 0:
                     str2 += replace
-            if str2:
+            if str2 == "/":
+                str2 = ""
+            elif str2:
                 str2 = "[[" + str2 + "]]"
             strout = strout.replace(str1, str2)
-            pos1 = strout.find('<')  # Is this line useful ?
+            pos1 = strout.find('<') # find next tag
         return strout
 
     def __init__(self, args, parent):
