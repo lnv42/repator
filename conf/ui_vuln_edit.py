@@ -57,22 +57,39 @@ def vuln_editing(doc_id, vuln, lang=""):
         "signalFct": "update_vuln",
         "arg": vuln["labelPos"+lang] if vuln["labelPos"+lang] else vuln["labelPos"]
     }
-    lst["observHistory"+lang+"-" + str(doc_id)] = {
+    lst["observNegHistory"+lang+"-" + str(doc_id)] = {
         "class": QComboBox,
-        "label": "Observation History",
+        "label": "Negative Observation History",
         "signal": "currentIndexChanged",
         "signalFct": "load_history",
         "items": list(map(lambda x: x.replace(
-            '\n', ' ')[:150], vuln["observHistory"+lang])) if vuln["observHistory"+lang] else (
-                list(map(lambda x: x.replace('\n', ' ')[:150], vuln["observHistory"])))
+            '\n', ' ')[:150], vuln["observNegHistory"+lang])) if vuln["observNegHistory"+lang] else (
+                list(map(lambda x: x.replace('\n', ' ')[:150], vuln["observNegHistory"])))
     }
-    lst["observ"+lang+"-" + str(doc_id)] = {
+    lst["observNeg"+lang+"-" + str(doc_id)] = {
         "class": RichTextEdit,
-        "label": "Observation",
+        "label": "Negative Observation",
         "signal": "text_changed",
         "signalFct": "update_vuln",
-        "arg": vuln["observ"+lang].replace("\n", "<br/>") if vuln["observ"+lang] else (
-            vuln["observ"].replace("\n", "<br/>"))
+        "arg": vuln["observNeg"+lang].replace("\n", "<br/>") if vuln["observNeg"+lang] else (
+            vuln["observNeg"].replace("\n", "<br/>"))
+    }
+    lst["observPosHistory"+lang+"-" + str(doc_id)] = {
+        "class": QComboBox,
+        "label": "Positive Observation History",
+        "signal": "currentIndexChanged",
+        "signalFct": "load_history",
+        "items": list(map(lambda x: x.replace(
+            '\n', ' ')[:150], vuln["observPosHistory"+lang])) if vuln["observPosHistory"+lang] else (
+                list(map(lambda x: x.replace('\n', ' ')[:150], vuln["observPosHistory"])))
+    }
+    lst["observPos"+lang+"-" + str(doc_id)] = {
+        "class": RichTextEdit,
+        "label": "Positive Observation",
+        "signal": "text_changed",
+        "signalFct": "update_vuln",
+        "arg": vuln["observPos"+lang].replace("\n", "<br/>") if vuln["observPos"+lang] else (
+            vuln["observPos"].replace("\n", "<br/>"))
     }
     lst["riskHistory"+lang+"-" + str(doc_id)] = {
         "class": QComboBox,
