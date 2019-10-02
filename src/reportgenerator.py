@@ -72,8 +72,10 @@ class Generator:
                 if match is not None:
                     text = re.sub("##" + name + "#" + match.group(1) + ":" + match.group(2) + "##",
                                   value[int(match.group(1)):int(match.group(2))], text)
-            else:
+            elif isinstance(value,int) or isinstance(value,float):
                 text = re.sub("##" + name + "##", str(value), text)
+            else:
+                pass #value should be a list or an orderedDict so nothing to do
 
         return text
 
@@ -92,7 +94,8 @@ class Generator:
         if "type" not in dic:
             return dic
 
-        dic["type"] = Generator.__sub_dict(content, dic["type"])
+        if dic["type"].find("##") >= 0:
+            dic["type"] = Generator.__sub_dict(content, dic["type"])
 
         if dic["type"] == "unordered_list" or dic["type"] == "ordered_list":
             res_content = []
