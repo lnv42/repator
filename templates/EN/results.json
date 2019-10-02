@@ -57,7 +57,7 @@
                 },
                 {
                     "type": "Normal",
-                    "content": "##observ##"
+                    "content": "##observNeg##"
                 },
                 {
                     "type": "Heading 5",
@@ -92,7 +92,7 @@
                 },
                 {
                     "type": "Normal",
-                    "content": "##observ##"
+                    "content": "##observPos##"
                 },
                 {
                     "type": "Heading 5",
