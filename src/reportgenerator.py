@@ -218,11 +218,35 @@ class Generator:
     def __generate_table(document, json_input, template):
         table = document.add_table(
             json_input["row"], json_input["col"], json_input["style"])
+
+        if "width" in json_input:
+            col = 0
+            for width in json_input["width"]:
+                table.columns[col].width = Cm(width)
+                for cell in table.columns[col].cells:
+                    cell.width = Cm(width)
+                col += 1
+
+        if "firstCol" in json_input:
+            table.first_col = json_input["firstCol"]
+        if "firstRow" in json_input:
+            table.first_row = json_input["firstRow"]
+        if "lastCol" in json_input:
+            table.last_col = json_input["lastCol"]
+        if "lastRow" in json_input:
+            table.last_row = json_input["lastRow"]
+        if "hBand" in json_input:
+            table.h_band(json_input["hBand"])
+        if "vBand" in json_input:
+            table.v_band(json_input["vBand"])
+
         for row in range(0, json_input["row"]):
             for col in range(0, json_input["col"]):
+                table.cell(row, col)._tc.clear_content()
                 Generator.generate_docx(table.cell(row, col),
                                         json_input["content"][row][col],
                                         template)
+
                 if "alignment" in json_input:
                     for paragraph in table.cell(row, col).paragraphs:
                         paragraph.alignment = Generator.__align(
@@ -257,25 +281,6 @@ class Generator:
                 if "celVAlignment" in json_input:
                     table.cell(row, col).vertical_alignment = Generator.__v_align(
                         json_input["celVAlignment"][row][col])
-
-                if "width" in json_input:
-                    col = 0
-                    for width in json_input["width"]:
-                        table.columns[col].width = Cm(width)
-                        col += 1
-
-                if "firstCol" in json_input:
-                    table.first_col = json_input["firstCol"]
-                if "firstRow" in json_input:
-                    table.first_row = json_input["firstRow"]
-                if "lastCol" in json_input:
-                    table.last_col = json_input["lastCol"]
-                if "lastRow" in json_input:
-                    table.last_row = json_input["lastRow"]
-                if "hBand" in json_input:
-                    table.h_band(json_input["hBand"])
-                if "vBand" in json_input:
-                    table.v_band(json_input["vBand"])
 
     @staticmethod
     def generate_docx(document, json_input, template):
