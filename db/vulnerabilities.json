@@ -6,8 +6,12 @@
       "name": "Dummy name",
       "labelNeg": "",
       "labelPos": "",
-      "observ": "",
-      "observHistory": [
+      "observNeg": "",
+      "observNegHistory": [
+        "New Observation"
+      ],
+      "observPos": "",
+      "observPosHistory": [
         "New Observation"
       ],
       "risk": "",
@@ -33,11 +37,15 @@
       "name": "SQL Injection",
       "labelNeg": "Some user supplied inputs are vulnerable to SQL injection",
       "labelPos": "No user supplied inputs are vulnerable to SQL injection",
-      "observ": "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code.",
-      "observHistory": [
+      "observNeg": "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code.",
+      "observNegHistory": [
         "New Observation",
-        "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code.",
         "Some user supplied inputs are inefficiently filtered and can be used to execute some SQL code."
+      ],
+      "observPos": "User inputs are well filtered before being included into SQL requests.",
+      "observPosHistory": [
+        "New Observation",
+        "User inputs are well filtered before being included into SQL requests."
       ],
       "risk": "SQL injection may be used by malicious peoples to read all the content of your database.\nDepending on the database configuration and on the injected SQL query, SQL injections are often allowing database writing.\nIn some case SQL injection may also lead to server side code execution.",
       "riskHistory": [
@@ -65,10 +73,15 @@
       "name": "XSS",
       "labelNeg": "Some user supplied inputs are vulnerable to Cross-Site-Scripting (XSS)",
       "labelPos": "No user supplied inputs are vulnerable to Cross-Site-Scripting (XSS)",
-      "observ": "Some user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages.",
-      "observHistory": [
+      "observNeg": "Some user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages.",
+      "observNegHistory": [
         "New Observation",
         "Some user supplied inputs are inefficiently filtered and can be used to inject some client-side executable code into web pages."
+      ],
+      "observPos": "User supplied inputs are well filtred before being included into web pages.",
+      "observPosHistory": [
+        "New Observation",
+        "User supplied inputs are well filtred before being included into web pages."
       ],
       "risk": "XSS may be used by malicious peoples to have some client-side code execution.\\nThis code execution can be used for example to steal user's session, to steal user's sensitives data or to perform some actions using his authorizations.",
       "riskHistory": [
@@ -95,8 +108,12 @@
       "name": "",
       "labelNeg": "",
       "labelPos": "",
-      "observ": "",
-      "observHistory": "",
+      "observNeg": "",
+      "observNegHistory": "",
+      "observPos": "",
+      "observPosHistory": [
+        "New Observation"
+      ],
       "risk": "",
       "riskHistory": "",
       "reco": "",
