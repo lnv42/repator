@@ -43,9 +43,6 @@ def clean_db(db, default, languages=[]):
                 if field+lang in row:
                     new_row[field+lang] = strip_field(row[field+lang])
 
-                    if len(new_row[field]) < 1:
-                        new_row[field] = new_row[field+lang]
-
         db.insert_record(new_row)
 
 def main(args):
