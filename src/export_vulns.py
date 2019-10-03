@@ -30,7 +30,7 @@ def main(args):
 
     field_names = ["id", "LANGUAGES"] + list(DB_VULNS_DEFAULT.keys())
     if len(LANGUAGES) > 1:
-        for lang in LANGUAGES:
+        for lang in LANGUAGES[1:]:
             field_names += [
                 field + lang for field in field_names_lang]
 
