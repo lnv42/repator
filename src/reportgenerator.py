@@ -80,7 +80,7 @@ class Generator:
         return text
 
     @staticmethod
-    def __do_fill(dic, content):
+    def __do_fill(dic, content, lang):
         if isinstance(dic, str):
             dic = Generator.__sub_dict(content, dic)
             return dic
@@ -88,7 +88,7 @@ class Generator:
         if isinstance(dic, list):
             res = []
             for entry in dic:
-                res.append(Generator.__do_fill(entry, content))
+                res.append(Generator.__do_fill(entry, content, lang))
             return res
 
         if "type" not in dic:
@@ -103,7 +103,7 @@ class Generator:
                 for content_var in dic["content"]:
                     template = dict(content_var)
                     template["content"] = Generator.__do_fill(
-                        template["content"], entry)
+                        template["content"], entry, lang)
                     res_content.append(template)
             dic["content"] = res_content
             return dic
@@ -115,16 +115,17 @@ class Generator:
                 vuln["doc_id"] = doc_id
                 if "riskLvl" not in vuln:
                     vuln["riskLvl"], vuln["impLvl"], vuln["expLvl"] = vuln_risk_level(
-                        vuln)
+                        vuln, lang)
+                    vuln["riskStyle"] = vuln_risk_level(vuln)[0]
                     vuln["cvss"], vuln["cvssImp"], vuln["cvssExp"] = vuln_cvssv3(
                         vuln)
 
-                if (vuln["riskLvl"] == match and vuln["status"] == "Vulnerable") or (
+                if (vuln["riskStyle"] == match and vuln["status"] == "Vulnerable") or (
                         vuln["status"] == match):
                     for content_var in dic["content"]:
                         template = dict(content_var)
                         template["content"] = Generator.__do_fill(
-                            template["content"], vuln)
+                            template["content"], vuln, lang)
                         res_content.append(template)
             dic["content"] = res_content
             return dic
@@ -139,17 +140,17 @@ class Generator:
                     cat = vuln["category"]
                     sub_cat = None
                     template = Generator.__do_fill(
-                        dict(dic["catContent"]), vuln)
+                        dict(dic["catContent"]), vuln, lang)
                     l_res.append(template)
 
                 if vuln["sub_category"] != sub_cat:
                     sub_cat = vuln["sub_category"]
                     template = Generator.__do_fill(
-                        dict(dic["subcatContent"]), vuln)
+                        dict(dic["subcatContent"]), vuln, lang)
                     l_res.append(template)
 
                 for content in dic["content-" + vuln["status"]]:
-                    template = Generator.__do_fill(dict(content), vuln)
+                    template = Generator.__do_fill(dict(content), vuln, lang)
                     l_res.append(template)
             dic["content"] = l_res
             return dic
@@ -163,17 +164,17 @@ class Generator:
         if isinstance(dic["content"], list):
             l_res = []
             for element in dic["content"]:
-                l_res.append(Generator.__do_fill(element, content))
+                l_res.append(Generator.__do_fill(element, content, lang))
             dic["content"] = l_res
         elif isinstance(dic["content"], str):
             dic["content"] = Generator.__sub_dict(content, dic["content"])
         else:
-            dic["content"] = Generator.__do_fill(dic["content"], content)
+            dic["content"] = Generator.__do_fill(dic["content"], content, lang)
 
         return dic
 
     @staticmethod
-    def generate_json(json_content, template):
+    def generate_json(json_content, template, lang):
         """Loads template file into json."""
         template_path = REPORT_TEMPLATE_DIR + template + "/"
         structure = None
@@ -188,7 +189,7 @@ class Generator:
             with open(template_path + element + ".json", "r") as file_stream:
                 file_content = file_stream.read()
             json_file_content = json.loads(file_content)
-            res = Generator.__do_fill(json_file_content, json_content)
+            res = Generator.__do_fill(json_file_content, json_content, lang)
             result_json["content"].append(res)
         return result_json
 
@@ -396,8 +397,10 @@ class Generator:
                     for name in keys:
                         if name.find(lang) == len(name)-len(lang):
                             vuln[name[:-len(lang)]] = vuln[name]
+        else:
+            lang = LANGUAGES[0]
 
-        json_values = Generator.generate_json(values, template)
+        json_values = Generator.generate_json(values, template, lang)
 
         doc = Document(docx=REPORT_TEMPLATE_DIR +
                        template + "/" + REPORT_TEMPLATE_BASE)

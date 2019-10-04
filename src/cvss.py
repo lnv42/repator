@@ -47,14 +47,15 @@ def cvssv3(attack_vector, attack_complexity, privileges_required,
     return round(score, 1), round(imp, 1), round(exp, 1)
 
 
-def vuln_risk_level(values):
+def vuln_risk_level(values, lang="EN"):
     """Returns the risk level from an array."""
     return risk_level(values["AV"], values["AC"], values["PR"], values["UI"],
-                      values["S"], values["C"], values["I"], values["A"])
+                      values["S"], values["C"], values["I"], values["A"], lang)
 
 
 def risk_level(attack_vector, attack_complexity, privileges_required,
-               user_interaction, scope, confidentiality, integrity, availability):
+               user_interaction, scope, confidentiality, integrity,
+               availability, lang="EN"):
     """Function that returns the risk level of the vulnerability which attributes are given."""
     cia_coeff = {"N": 0, "L": 1, "H": 2}
     s_coeff = {"U": False, "C": True}
@@ -109,10 +110,16 @@ def risk_level(attack_vector, attack_complexity, privileges_required,
     else:
         risk_lvl = 4
 
-    risk_lvl_values = {1: "Low", 2: "Medium", 3: "High", 4: "Very High"}
-    impact_lvl_values = {1: "Low", 2: "Medium", 3: "High", 4: "Very High"}
-    exploitability_lvl_values = {1: "Dificult",
-                                 2: "Medium", 3: "Easy", 4: "Very Easy"}
+    if lang == "FR":
+        risk_lvl_values = {1: "Faible", 2: "Modéré", 3: "Élevé", 4: "Très élevé"}
+        impact_lvl_values = {1: "Faible", 2: "Moyen", 3: "Fort", 4: "Très fort"}
+        exploitability_lvl_values = {1: "Très difficile", 2: "Difficile",
+                                     3: "Moyenne", 4: "Facile"}
+    else:
+        risk_lvl_values = {1: "Low", 2: "Medium", 3: "High", 4: "Very High"}
+        impact_lvl_values = {1: "Low", 2: "Medium", 3: "High", 4: "Very High"}
+        exploitability_lvl_values = {1: "Dificult", 2: "Medium", 3: "Easy",
+                                     4: "Very Easy"}
 
     return (risk_lvl_values[risk_lvl], impact_lvl_values[impact_lvl],
             exploitability_lvl_values[exploitability_lvl])
