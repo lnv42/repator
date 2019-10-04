@@ -119,47 +119,91 @@ def vuln_changes(doc_id, vuln1, vuln2, style, lang=""):
         "col": 5,
         "colspan": 4}
 
-    lst["observHistory" + lang + "-" + str(doc_id)] = {
+    lst["observPosHistory" + lang + "-" + str(doc_id)] = {
         "class": QLabel,
-        "arg": "Observation History",
+        "arg": "Positive Observation History",
         "col": 0}
-    lst["observHistory" + lang + "-" + str(doc_id) + "-1"] = {
+    lst["observPosHistory" + lang + "-" + str(doc_id) + "-1"] = {
         "class": QComboBox,
         "signal": "currentIndexChanged",
         "signalFct": "update_history",
-        "items": list(map(lambda x: x.replace('\n', ' ')[:50], vuln1["observHistory"+lang])) if (
-            "observHistory"+lang in vuln1) else (
+        "items": list(map(lambda x: x.replace('\n', ' ')[:50], vuln1["observPosHistory"+lang])) if (
+            "observPosHistory"+lang in vuln1) else (
                 list(map(lambda x: x.replace(
-                    '\n', ' ')[:50], vuln1["observHistory"]))),
+                    '\n', ' ')[:50], vuln1["observPosHistory"]))),
         "col": 1,
         "colspan": 4,
         "setLength": 50}
-    lst["observHistory" + lang + "-" + str(doc_id) + "-2"] = {
+    lst["observPosHistory" + lang + "-" + str(doc_id) + "-2"] = {
         "class": QComboBox,
         "signal": "currentIndexChanged",
         "signalFct": "update_history",
-        "items": list(map(lambda x: x.replace('\n', ' ')[:50], vuln2["observHistory"+lang])) if (
-            "observHistory"+lang in vuln2) else (
+        "items": list(map(lambda x: x.replace('\n', ' ')[:50], vuln2["observPosHistory"+lang])) if (
+            "observPosHistory"+lang in vuln2) else (
                 list(map(lambda x: x.replace(
-                    '\n', ' ')[:50], vuln2["observHistory"]))),
+                    '\n', ' ')[:50], vuln2["observPosHistory"]))),
         "col": 5,
         "colspan": 4,
         "setLength": 50}
 
-    lst["observ" + lang + "-" + str(doc_id)] = {
+    lst["observPos" + lang + "-" + str(doc_id)] = {
         "class": QLabel,
-        "arg": "Observation",
+        "arg": "Positive Observation",
         "col": 0}
-    lst["observ" + lang + "-" + str(doc_id) + "-1"] = {
+    lst["observPos" + lang + "-" + str(doc_id) + "-1"] = {
         "class": QLabel,
-        "arg": vuln1["observ"+lang].replace("\n", "<br/>") if "observ"+lang in vuln1 else (
-            vuln1["observ"].replace("\n", "<br/>")),
+        "arg": vuln1["observPos"+lang].replace("\n", "<br/>") if "observPos"+lang in vuln1 else (
+            vuln1["observPos"].replace("\n", "<br/>")),
         "col": 1,
         "colspan": 4}
-    lst["observ" + lang + "-" + str(doc_id) + "-2"] = {
+    lst["observPos" + lang + "-" + str(doc_id) + "-2"] = {
         "class": QLabel,
-        "arg": vuln2["observ"+lang].replace("\n", "<br/>") if "observ"+lang in vuln2 else (
-            vuln2["observ"].replace("\n", "<br/>")),
+        "arg": vuln2["observPos"+lang].replace("\n", "<br/>") if "observPos"+lang in vuln2 else (
+            vuln2["observPos"].replace("\n", "<br/>")),
+        "col": 5,
+        "colspan": 4}
+
+    lst["observNegHistory" + lang + "-" + str(doc_id)] = {
+        "class": QLabel,
+        "arg": "Negative Observation History",
+        "col": 0}
+    lst["observNegHistory" + lang + "-" + str(doc_id) + "-1"] = {
+        "class": QComboBox,
+        "signal": "currentIndexChanged",
+        "signalFct": "update_history",
+        "items": list(map(lambda x: x.replace('\n', ' ')[:50], vuln1["observNegHistory"+lang])) if (
+            "observNegHistory"+lang in vuln1) else (
+                list(map(lambda x: x.replace(
+                    '\n', ' ')[:50], vuln1["observNegHistory"]))),
+        "col": 1,
+        "colspan": 4,
+        "setLength": 50}
+    lst["observNegHistory" + lang + "-" + str(doc_id) + "-2"] = {
+        "class": QComboBox,
+        "signal": "currentIndexChanged",
+        "signalFct": "update_history",
+        "items": list(map(lambda x: x.replace('\n', ' ')[:50], vuln2["observNegHistory"+lang])) if (
+            "observNegHistory"+lang in vuln2) else (
+                list(map(lambda x: x.replace(
+                    '\n', ' ')[:50], vuln2["observNegHistory"]))),
+        "col": 5,
+        "colspan": 4,
+        "setLength": 50}
+
+    lst["observNeg" + lang + "-" + str(doc_id)] = {
+        "class": QLabel,
+        "arg": "Negative Observation",
+        "col": 0}
+    lst["observNeg" + lang + "-" + str(doc_id) + "-1"] = {
+        "class": QLabel,
+        "arg": vuln1["observNeg"+lang].replace("\n", "<br/>") if "observNeg"+lang in vuln1 else (
+            vuln1["observNeg"].replace("\n", "<br/>")),
+        "col": 1,
+        "colspan": 4}
+    lst["observNeg" + lang + "-" + str(doc_id) + "-2"] = {
+        "class": QLabel,
+        "arg": vuln2["observNeg"+lang].replace("\n", "<br/>") if "observNeg"+lang in vuln2 else (
+            vuln2["observNeg"].replace("\n", "<br/>")),
         "col": 5,
         "colspan": 4}
 

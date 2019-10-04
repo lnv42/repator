@@ -470,6 +470,18 @@ class Tab(QScrollArea):
             if "setReadOnly" in field:
                 widget.setReadOnly(field["setReadOnly"])
 
+            if "selectionMode" in field:
+                widget.setSelectionMode(field["selectionMode"])
+
+            if "clicked" in field:
+                widget.clicked.connect(getattr(self, field["clicked"]))
+
+            if "setStyleSheet" in field:
+                widget.setStyleSheet(field["setStyleSheet"])
+
+            if "setReadOnly" in field:
+                widget.setReadOnly(field["setReadOnly"])
+
             if "label" in field:
                 label = QLabel(field["label"])
                 self.grid.addWidget(label, self.row, 0)

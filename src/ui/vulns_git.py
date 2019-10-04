@@ -13,11 +13,16 @@ from PyQt5.QtWidgets import (QWidget, QTabWidget, QGridLayout, QTabBar,
 
 from conf.ui_vuln_changes import vuln_changes
 from conf.ui_vulns_initial import VULNS_INITIAL
+from conf.ui_vulns import VULNS
 from conf.report import LANGUAGES, GREEN, RED, BLUE, DEFAULT, COLORS, HEADERS, CVSS, HISTORIES
 from conf.db import DB_VULNS_INITIAL, DB_VULNS_GIT, DB_VULNS
 from src.cvss import cvssv3, risk_level
 from src.git_interactions import Git
+from src.ui.checks_window import GitButton
 from src.ui.tab import Tab
+
+
+from src.dbhandler import DBHandler
 
 
 class VulnsGit(QWidget):
@@ -112,15 +117,16 @@ class VulnsGit(QWidget):
 
     def init_bottom_buttons(self):
         """Creates the buttons at the bottom of the window "Diffs"."""
-        self.buttons["uploadBtn"] = QPushButton("Upload changes")
-        self.buttons["dismissBtn"] = QPushButton("Dismiss changes")
-        self.buttons["patchBtn"] = QPushButton("Patch")
+        self.buttons["uploadBtn"] = GitButton("Upload changes", "upload", self)
+        self.buttons["dismissBtn"] = GitButton(
+            "Dismiss changes", "dismiss", self)
+        self.buttons["patchBtn"] = GitButton("Patch", "patch", self)
         self.buttons["dismissOneBtn"] = QPushButton(
             "Dismiss changes for this vuln")
         self.buttons["patchOneBtn"] = QPushButton("Patch this vuln")
-        self.buttons["uploadBtn"].clicked.connect(self.upload_changes)
-        self.buttons["dismissBtn"].clicked.connect(self.dismiss_changes)
-        self.buttons["patchBtn"].clicked.connect(self.patch_changes)
+        # self.buttons["uploadBtn"].clicked.connect(self.upload_changes)
+        # self.buttons["dismissBtn"].clicked.connect(self.dismiss_changes)
+        # self.buttons["patchBtn"].clicked.connect(self.patch_changes)
         self.buttons["dismissOneBtn"].clicked.connect(self.dismiss_one_change)
         self.buttons["patchOneBtn"].clicked.connect(self.patch_one_change)
         self.grid.addWidget(self.buttons["uploadBtn"], 1, 0)
@@ -131,9 +137,6 @@ class VulnsGit(QWidget):
 
         # TODO: remove this as the corresponding features are added.
         self.buttons["uploadBtn"].setEnabled(False)
-        self.buttons["dismissBtn"].setEnabled(False)
-        self.buttons["patchBtn"].setEnabled(False)
-        self.buttons["patchOneBtn"].setEnabled(False)
 
         self.show_buttons_all_view()
 
@@ -161,31 +164,59 @@ class VulnsGit(QWidget):
         self.buttons["dismissOneBtn"].show()
         self.buttons["patchOneBtn"].show()
 
-    def upload_changes(self):
+    def upload_changes(self, checked):
         """uploads changes made to local vuln database to the git repository."""
         # TODO:
         # Uploads the changes made to local database vulnerabilities to the
         # remote git repository.
         # => Need une fonction qui va vérifier la cohérence des bases de
         # données.
+        for ident in checked:
+            if self.style[ident] == RED:
+                del self.json_db_git[ident]
+            else:
+                self.json_db_git[ident] = self.json_db[ident]
+            jsondb = "{\"_default\":" + \
+                json.dumps({int(x): self.json_db_git[x]
+                            for x in self.json_db_git.keys()}, sort_keys=True) + "}"
+            with open(DB_VULNS_GIT, 'w') as output:
+                output.write(jsondb)
+            with open(DB_VULNS_INITIAL, 'w') as output:
+                output.write(jsondb)
+        # To also update repator window
+        for window in self.app.topLevelWidgets():
+            if window.windowTitle() == "Repator":
+                repator = window
+        self.refresh_repator(repator)
+        self.update_diffs()
+        self.refresh_tab_widget()
 
-    def dismiss_changes(self):
+    def dismiss_changes(self, checked):
         """Allows to choose which vulnerabilities are not followed."""
-        # TODO:
-        # Dans "All", il faut que cela soit un bouton qui mette une popup
-        # listant tous les changements visibles ou dismissed.
+        self.dismissed_vulns = checked
+        self.refresh_tab_widget()
 
-    def patch_changes(self):
+    def patch_changes(self, checked):
         """Allows to choose which changes to apply to the local vuln database."""
-        # TODO:
-        # met une qdialog qui montre toutes les possibilités de vulns avec par
-        # défaut celles qui sont visibles. Il doit y avoir un bouton ok et
-        # cancel
-        # Ok doit appliquer les changements, mettre à jour "All", supprimer les
-        # onglets et mettre à jour dans Vulns onglet "All" et ceux qui ont été
-        # patch si jamais leurs onglets sont ouverts. De plus, il est
-        # nécessaire de mettre à jour les icônes ainsi que les variables. En
-        # gros, ça serait plus simple d'avoir à redémarrer l'appli...
+        for ident in checked:
+            if self.style[ident] == RED:
+                del self.json_db_initial[ident]
+            else:
+                self.json_db_initial[ident] = self.json_db_git[ident]
+            jsondb = "{\"_default\":" + \
+                json.dumps({int(x): self.json_db_initial[x]
+                            for x in self.json_db_initial.keys()}, sort_keys=True) + "}"
+            with open(DB_VULNS, 'w') as output:
+                output.write(jsondb)
+            with open(DB_VULNS_INITIAL, 'w') as output:
+                output.write(jsondb)
+            # To also update repator window
+        for window in self.app.topLevelWidgets():
+            if window.windowTitle() == "Repator":
+                repator = window
+        self.refresh_repator(repator)
+        self.update_diffs()
+        self.refresh_tab_widget()
 
     def dismiss_one_change(self):
         """Stops following the current vulnerability."""
@@ -202,83 +233,40 @@ class VulnsGit(QWidget):
 
     def patch_one_change(self):
         """Applies remote changes to local vuln database."""
-        # TODO: Voir pour le remove et l'add
         index = self.tabw.currentIndex()
         ident = self.tabw.tabText(index)
-        self.json_db_initial[ident] = self.json_db_git[ident]
+        if self.style[ident] == RED:
+            del self.json_db_initial[ident]
+        else:
+            self.json_db_initial[ident] = self.json_db_git[ident]
         jsondb = "{\"_default\":" + \
-            json.dumps(self.json_db_initial, sort_keys=True) + "}"
+            json.dumps({int(x): self.json_db_initial[x]
+                        for x in self.json_db_initial.keys()}, sort_keys=True) + "}"
         with open(DB_VULNS, 'w') as output:
             output.write(jsondb)
         with open(DB_VULNS_INITIAL, 'w') as output:
             output.write(jsondb)
-        self.update_diffs()
-        self.refresh_tab_widget()
         # To also update repator window
         for window in self.app.topLevelWidgets():
             if window.windowTitle() == "Repator":
                 repator = window
-        vulns = repator.layout().itemAt(
-            0).widget().widget(3).fields["vulns"]
-        # Patches the "All" tab
-        for field in ["category", "sub_category", "name"]:
-            vulns.tabw.widget(0).fields[field + "-" + ident].setText(
-                self.json_db_initial[ident][field])
-        # Patches the tab if it exists
-        index = None
-        for i in range(vulns.tabw.count()):
-            if vulns.tabw.tabText(i) == ident:
-                tab = vulns.tabw.widget(i)
-                index = i
-        if index:
-            print(self.json_db_initial[ident])
-            print(vulns.lst)
-            vulns.tabw.removeTab(index)
-            if len(LANGUAGES) == 1:
-                vulns.tabs[ident] = Tab(vulns, tab.lst, tab.database, tab.add_fct)
-                vulns.tabw.removeTab(index)
-                vulns.tabw.insertTab(index, vulns.tabs[ident], ident)
-            else:
-                tabw = QTabWidget()
-                tabs = OrderedDict()
-                for lang in LANGUAGES:
-                    tabs[lang] = Tab(vulns, tab.lst[lang], tab.database, tab.add_fct)
-                    tabw.addTab(tabs[lang], lang)
-                vulns.tabs[ident] = tabs
-                vulns.tabw.removeTab(index)
-                vulns.tabw.insertTab(index, tabw, ident)
-
-
-
-
-        # def addTab(self, label, lst, db, addFct=None):
-        #     else:
-        #         if label == "All" or len(LANGUAGES) == 1:
-        #             self.tabs[label] = Tab(self, lst, db, addFct)
-        #             self.tabw.addTab(self.tabs[label], label)
-        #             self.tabw.setCurrentWidget(self.tabs[label])
-        #         else:
-        #             tabw = QTabWidget()
-        #             tabs = OrderedDict()
-        #             for lang in LANGUAGES:
-        #                 tabs[lang] = Tab(self, lst[lang], db, addFct)
-        #                 tabw.addTab(tabs[lang], lang)
-        #             self.tabs[label] = tabs
-        #             self.tabw.addTab(tabw, label)
-        #             self.tabw.setCurrentWidget(tabw)
-
-        # print(tab)
-        # for field in tab_widget.fields:
-        #     print(field)
-        # print(tab_widget.fields)
-        # print(tab_widget.count())
-        # for i in range(tab_widget.count()):
-        #     print(tab_widget.widget(i))
-        # needs to update repator window
+                vulns = repator.layout().itemAt(
+                    0).widget().widget(3).fields["vulns"]
+        # Patches the "All" tab for repator
+        tab = vulns.tabw.widget(0)
+        if self.style[ident] == GREEN or self.style[ident] == RED:
+            self.refresh_repator(repator, [ident])
+        else:
+            for field in ["category", "sub_category", "name"]:
+                tab.fields[field + "-" + ident].setText(
+                    self.json_db_initial[ident][field])
+                self.refresh_repator(repator)
+        self.update_diffs()
+        self.refresh_tab_widget()
 
     def add_changed_entries(self, lst):
         """Adds all entries from self.style to the tab "All"."""
-        entry = sorted(self.style.keys())
+        entry = sorted(self.style.keys(), key=int)
         for ident in entry:
             if ident not in self.dismissed_vulns:
                 item = self.db_initial.search_by_id(
@@ -595,13 +583,14 @@ class VulnsGit(QWidget):
         entry = sorted(self.style.keys())
         for ident in entry:
             fields = self.tabs["All"].fields
-            color = self.style[ident]
-            if color == BLUE:
-                fields["diff-" + str(ident)].edited()
-            if color == RED:
-                fields["diff-" + str(ident)].deleted()
-            if color == GREEN:
-                fields["diff-" + str(ident)].added()
+            if ident not in self.dismissed_vulns:
+                color = self.style[ident]
+                if color == BLUE:
+                    fields["diff-" + str(ident)].edited()
+                if color == RED:
+                    fields["diff-" + str(ident)].deleted()
+                if color == GREEN:
+                    fields["diff-" + str(ident)].added()
 
     def refresh_tab_widget(self):
         """Rebuilds the widget with the tabs currently open."""
@@ -612,12 +601,36 @@ class VulnsGit(QWidget):
         self.lst = copy(VULNS_INITIAL)
         self.init_tab()
         self.grid.replaceWidget(self.layout().itemAt(0).widget(), self.tabw)
-        for doc_id in tabs:
+        for doc_id in reversed(tabs):
             if doc_id in self.style:
                 self.see_changes_vuln(doc_id)
         self.tabw.setCurrentWidget(self.tabs["All"])
         self.grid.itemAt(0).widget().currentChanged.connect(
             self.change_bottom_buttons)
+
+    def refresh_repator(self, repator, index=None):
+        """Rebuilds the vulns widget repator with the tabs currently open (without index)"""
+        vulns = repator.layout().itemAt(0).widget().widget(3).fields["vulns"]
+        tabs = []
+        for i in range(vulns.tabw.tabBar().count() - 1, 0, -1):
+            tabs.append(vulns.tabw.tabBar().tabText(i))
+            self.tabw.tabBar().removeTab(i)
+        if index:
+            for i in index:
+                if i in tabs:
+                    tabs.remove(i)
+
+        del vulns.database
+        vulns.tabw.deleteLater()
+        vulns.lst = copy(VULNS)
+        vulns.database = DBHandler.vulns()
+        vulns.tabs = {}
+        vulns.init_tab()
+        vulns.grid.replaceWidget(vulns.layout().itemAt(0).widget(), vulns.tabw)
+
+        for doc_id in reversed(tabs):
+            vulns.tabs["All"].fields["edit-" + doc_id].animateClick()
+        vulns.tabw.setCurrentWidget(vulns.tabs["All"])
 
     def toggle_dismiss(self):
         """Toggles self.dismiss."""

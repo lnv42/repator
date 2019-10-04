@@ -18,8 +18,8 @@ DEFAULT = '#000000'
 COLORS = [BLUE, GREEN, RED, DEFAULT]
 HEADERS = {"category", "sub_category", "name", "labelNeg", "labelPos"}
 CVSS = {"AV", "AC", "PR", "UI", "S", "C", "I", "A"}
-HISTORIES = {"reco", "observ", "risk"}
+HISTORIES = {"reco", "observPos", "observNeg", "risk"}
 
-SSH_KEY = ""
-GIT = ""
+GIT = "git@10.0.0.103:~/vulnerabilities.git"
+SSH_KEY = "~/.ssh/git_tries"
 REFRESH_RATE = 10

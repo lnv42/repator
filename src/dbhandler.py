@@ -69,7 +69,7 @@ class DBHandler:
         return True
 
     def insert_record(self, dictionary=None):
-        """Adds a new empty record to the database."""
+        """Adds a new record to the database."""
         if dictionary is None:
             dictionary = collections.OrderedDict(self.search_by_id(1))
             for k in dictionary:
